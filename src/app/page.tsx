@@ -129,7 +129,7 @@ export default async function Home() {
         />
 
         <p className="relative text-sm sm:text-base uppercase tracking-[0.3em] text-zinc-400 mb-4">
-          That Jazz Show &bull; KRUI 89.7 FM
+          As Heard on 89.7 KRUI-FM
         </p>
 
         <h1 className="relative font-[family-name:var(--font-playfair)] text-5xl sm:text-7xl lg:text-8xl font-bold text-[#D4A843] leading-tight mb-6">
@@ -139,7 +139,7 @@ export default async function Home() {
         </h1>
 
         <p className="relative max-w-xl text-zinc-400 text-lg sm:text-xl leading-relaxed mb-8">
-          Welcome to the Speakeasy. 64 jazz legends enter. Only one will reign supreme.
+          Welcome to the Speakeasy Nightclub. 64 jazz legends enter. Only one will reign supreme.
         </p>
 
         {/* Art Deco Divider */}
