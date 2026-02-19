@@ -44,9 +44,9 @@ export function CommentaryInput({
       <button
         onClick={handleExpand}
         className={`
-          w-full text-left text-sm text-gray-500 hover:text-gold/70
+          w-full text-left text-sm text-dim hover:text-accent/70
           px-3 py-2 rounded-md border border-dashed border-gray-700
-          hover:border-gold/30 transition-colors
+          hover:border-accent/30 transition-colors
           ${className}
         `}
       >
@@ -67,8 +67,8 @@ export function CommentaryInput({
         rows={3}
         className="
           w-full resize-none rounded-md
-          bg-[#0A0A0A] border border-gray-700
-          focus:border-gold focus:ring-1 focus:ring-gold/30
+          bg-background border border-gray-700
+          focus:border-accent focus:ring-1 focus:ring-gold/30
           text-sm text-gray-200 placeholder-gray-600
           px-3 py-2 outline-none transition-colors
         "

@@ -25,10 +25,10 @@ export default async function LeaderboardPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center px-4">
-          <h1 className="font-[family-name:var(--font-playfair)] text-3xl font-bold text-[#D4A843] mb-4">
+          <h1 className="font-display text-3xl font-bold text-accent mb-4">
             No Tournament Found
           </h1>
-          <p className="text-zinc-400 font-[family-name:var(--font-inter)]">
+          <p className="text-muted font-sans">
             There is no active tournament at this time. Check back later.
           </p>
         </div>
@@ -68,7 +68,7 @@ export default async function LeaderboardPage() {
   );
 
   return (
-    <main className="min-h-screen bg-[#0A0A0A]">
+    <main className="min-h-screen bg-background">
       <LeaderboardTable
         entries={rankedEntries}
         revealedThrough={revealedThrough}

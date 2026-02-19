@@ -103,10 +103,10 @@ export default function RevealControls({ tournament, masterBracket }: RevealCont
     <div className="space-y-8">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-bold text-[#D4A843] tracking-wide">
+        <h1 className="text-2xl font-bold text-accent tracking-wide">
           Reveal Controls
         </h1>
-        <p className="text-zinc-400 text-sm mt-1">
+        <p className="text-muted text-sm mt-1">
           Progressively reveal tournament results round by round.
         </p>
       </div>
@@ -119,13 +119,13 @@ export default function RevealControls({ tournament, masterBracket }: RevealCont
       )}
 
       {/* Tournament Status Card */}
-      <div className="bg-[#1A1A1A] border border-[#D4A843]/20 rounded-lg p-6">
+      <div className="bg-surface-hover border border-accent/20 rounded-lg p-6">
         <h2 className="text-lg font-semibold text-zinc-200 mb-4">
           Tournament Status
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm text-zinc-400 mb-1.5">
+            <label className="block text-sm text-muted mb-1.5">
               Tournament Name
             </label>
             <p className="text-zinc-200 font-medium">{tournament.name}</p>
@@ -134,7 +134,7 @@ export default function RevealControls({ tournament, masterBracket }: RevealCont
           <div>
             <label
               htmlFor="tournament-status"
-              className="block text-sm text-zinc-400 mb-1.5"
+              className="block text-sm text-muted mb-1.5"
             >
               Status
             </label>
@@ -144,7 +144,7 @@ export default function RevealControls({ tournament, masterBracket }: RevealCont
                 value={currentStatus}
                 onChange={(e) => handleStatusChange(e.target.value as TournamentStatus)}
                 disabled={statusUpdating}
-                className="flex-1 px-3 py-2 rounded bg-[#0A0A0A] border border-zinc-700 text-zinc-100 focus:outline-none focus:border-[#D4A843] focus:ring-1 focus:ring-[#D4A843]/50 transition-colors disabled:opacity-50 cursor-pointer"
+                className="flex-1 px-3 py-2 rounded bg-background border border-subtle text-foreground focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/50 transition-colors disabled:opacity-50 cursor-pointer"
               >
                 {STATUSES.map((s) => (
                   <option key={s} value={s}>
@@ -153,7 +153,7 @@ export default function RevealControls({ tournament, masterBracket }: RevealCont
                 ))}
               </select>
               {statusUpdating && (
-                <span className="text-xs text-zinc-500 animate-pulse">
+                <span className="text-xs text-dim animate-pulse">
                   Updating...
                 </span>
               )}
@@ -161,7 +161,7 @@ export default function RevealControls({ tournament, masterBracket }: RevealCont
           </div>
 
           <div>
-            <label className="block text-sm text-zinc-400 mb-1.5">
+            <label className="block text-sm text-muted mb-1.5">
               Revealed Through
             </label>
             <p className="text-zinc-200 font-medium">
@@ -172,7 +172,7 @@ export default function RevealControls({ tournament, masterBracket }: RevealCont
           </div>
 
           <div>
-            <label className="block text-sm text-zinc-400 mb-1.5">
+            <label className="block text-sm text-muted mb-1.5">
               Master Bracket Picks
             </label>
             <p className="text-zinc-200 font-medium">
@@ -183,11 +183,11 @@ export default function RevealControls({ tournament, masterBracket }: RevealCont
       </div>
 
       {/* Round Reveal Buttons */}
-      <div className="bg-[#1A1A1A] border border-[#D4A843]/20 rounded-lg p-6">
+      <div className="bg-surface-hover border border-accent/20 rounded-lg p-6">
         <h2 className="text-lg font-semibold text-zinc-200 mb-2">
           Round Reveals
         </h2>
-        <p className="text-sm text-zinc-500 mb-6">
+        <p className="text-sm text-dim mb-6">
           Reveal rounds sequentially. Each reveal is irreversible and will update participant scores.
         </p>
 
@@ -200,11 +200,11 @@ export default function RevealControls({ tournament, masterBracket }: RevealCont
               return (
                 <div
                   key={round}
-                  className="relative border border-[#D4A843]/40 bg-[#D4A843]/10 rounded-lg p-5 text-center"
+                  className="relative border border-accent/40 bg-accent/10 rounded-lg p-5 text-center"
                 >
                   {/* Checkmark badge */}
                   <div className="absolute top-3 right-3">
-                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-[#D4A843]/20 text-[#D4A843]">
+                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-accent/20 text-accent">
                       <svg
                         className="w-4 h-4"
                         fill="none"
@@ -220,13 +220,13 @@ export default function RevealControls({ tournament, masterBracket }: RevealCont
                       </svg>
                     </span>
                   </div>
-                  <p className="text-xs uppercase tracking-wider text-[#D4A843]/70 mb-1">
+                  <p className="text-xs uppercase tracking-wider text-accent/70 mb-1">
                     Round {round}
                   </p>
-                  <p className="text-[#D4A843] font-semibold text-lg">
+                  <p className="text-accent font-semibold text-lg">
                     {roundName}
                   </p>
-                  <p className="text-xs text-[#D4A843]/60 mt-2">Revealed</p>
+                  <p className="text-xs text-accent/60 mt-2">Revealed</p>
                 </div>
               );
             }
@@ -235,18 +235,18 @@ export default function RevealControls({ tournament, masterBracket }: RevealCont
               return (
                 <div
                   key={round}
-                  className="border-2 border-[#D4A843] rounded-lg p-5 text-center bg-[#D4A843]/5"
+                  className="border-2 border-accent rounded-lg p-5 text-center bg-accent/5"
                 >
-                  <p className="text-xs uppercase tracking-wider text-zinc-400 mb-1">
+                  <p className="text-xs uppercase tracking-wider text-muted mb-1">
                     Round {round}
                   </p>
-                  <p className="text-zinc-100 font-semibold text-lg mb-4">
+                  <p className="text-foreground font-semibold text-lg mb-4">
                     {roundName}
                   </p>
                   <button
                     onClick={() => handleRevealRound(round)}
                     disabled={revealing}
-                    className="w-full py-2.5 px-4 rounded font-semibold bg-[#D4A843] text-[#0A0A0A] hover:bg-[#C49A3A] disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer text-sm"
+                    className="w-full py-2.5 px-4 rounded font-semibold bg-accent text-white hover:bg-accent-light disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer text-sm"
                   >
                     {revealing ? 'Revealing...' : `Reveal ${roundName}`}
                   </button>
@@ -258,12 +258,12 @@ export default function RevealControls({ tournament, masterBracket }: RevealCont
             return (
               <div
                 key={round}
-                className="border border-zinc-700/50 rounded-lg p-5 text-center opacity-50"
+                className="border border-subtle/50 rounded-lg p-5 text-center opacity-50"
               >
                 <p className="text-xs uppercase tracking-wider text-zinc-600 mb-1">
                   Round {round}
                 </p>
-                <p className="text-zinc-500 font-semibold text-lg">
+                <p className="text-dim font-semibold text-lg">
                   {roundName}
                 </p>
                 <p className="text-xs text-zinc-600 mt-2">Pending</p>
@@ -274,21 +274,21 @@ export default function RevealControls({ tournament, masterBracket }: RevealCont
       </div>
 
       {/* Progress Bar */}
-      <div className="bg-[#1A1A1A] border border-[#D4A843]/20 rounded-lg p-6">
+      <div className="bg-surface-hover border border-accent/20 rounded-lg p-6">
         <h2 className="text-lg font-semibold text-zinc-200 mb-4">
           Reveal Progress
         </h2>
-        <div className="w-full bg-zinc-800 rounded-full h-3 overflow-hidden">
+        <div className="w-full bg-charcoal rounded-full h-3 overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-[#D4A843] to-[#C49A3A] rounded-full transition-all duration-500 ease-out"
+            className="h-full bg-gradient-to-r from-accent to-accent-light rounded-full transition-all duration-500 ease-out"
             style={{ width: `${(revealedThrough / 6) * 100}%` }}
           />
         </div>
         <div className="flex justify-between mt-2">
-          <span className="text-xs text-zinc-500">
+          <span className="text-xs text-dim">
             {revealedThrough} of 6 rounds revealed
           </span>
-          <span className="text-xs text-zinc-500">
+          <span className="text-xs text-dim">
             {revealedThrough === 6
               ? 'Tournament complete!'
               : `Next: ${ROUND_NAMES[revealedThrough + 1]}`}

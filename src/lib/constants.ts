@@ -16,6 +16,13 @@ export const REGION_SUBTITLES: Record<Region, string> = {
   soloists: 'The Virtuosos',
 };
 
+export const REGION_COLORS: Record<Region, { primary: string; light: string }> = {
+  vocalists: { primary: '#C2703E', light: '#E0A060' },
+  bandleaders: { primary: '#2980B9', light: '#5DADE2' },
+  composers: { primary: '#2F7E61', light: '#52B788' },
+  soloists: { primary: '#9A3D50', light: '#B85C6E' },
+};
+
 export const ROUND_NAMES: Record<number, string> = {
   1: 'Round of 64',
   2: 'Round of 32',

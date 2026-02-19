@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Artist, Region } from '@/lib/types';
+import { Artist, Region, MediaLink } from '@/lib/types';
 import { REGIONS, REGION_LABELS } from '@/lib/constants';
 
 interface ArtistFormData {
@@ -13,6 +13,7 @@ interface ArtistFormData {
   era: string;
   featured_track_url: string;
   featured_track_title: string;
+  media: MediaLink[];
 }
 
 const emptyForm: ArtistFormData = {
@@ -24,6 +25,14 @@ const emptyForm: ArtistFormData = {
   era: '',
   featured_track_url: '',
   featured_track_title: '',
+  media: [],
+};
+
+const emptyMediaLink: MediaLink = {
+  type: 'video',
+  url: '',
+  title: '',
+  source: '',
 };
 
 interface ArtistManagerProps {
@@ -76,6 +85,7 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
       era: artist.era || '',
       featured_track_url: artist.featured_track_url || '',
       featured_track_title: artist.featured_track_title || '',
+      media: artist.media || [],
     });
     setError(null);
   };
@@ -153,12 +163,12 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
   const isFormOpen = editingArtist !== null || addingToRegion !== null;
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-white">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#D4A843]">Artist Management</h1>
-          <p className="text-gray-400 mt-1">
+          <h1 className="text-3xl font-bold text-accent">Artist Management</h1>
+          <p className="text-muted mt-1">
             Manage the 64 artists across all four regions of the bracket.
           </p>
         </div>
@@ -178,15 +188,15 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
 
         {/* Form modal */}
         {isFormOpen && (
-          <div className="mb-8 p-6 bg-[#111111] border border-[#D4A843]/20 rounded-lg">
-            <h2 className="text-xl font-semibold text-[#D4A843] mb-4">
+          <div className="mb-8 p-6 bg-surface border border-accent/20 rounded-lg">
+            <h2 className="text-xl font-semibold text-accent mb-4">
               {editingArtist ? `Edit: ${editingArtist.name}` : 'Add New Artist'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Name */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-muted mb-1">
                     Name <span className="text-red-400">*</span>
                   </label>
                   <input
@@ -194,14 +204,14 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
                     required
                     value={formData.name}
                     onChange={(e) => updateField('name', e.target.value)}
-                    className="w-full px-3 py-2 bg-[#1A1A1A] border border-[#D4A843]/20 rounded-md text-white placeholder-gray-500 focus:outline-none focus:border-[#D4A843]/60"
+                    className="w-full px-3 py-2 bg-surface-hover border border-accent/20 rounded-md text-foreground placeholder-dim focus:outline-none focus:border-accent/60"
                     placeholder="e.g. Ella Fitzgerald"
                   />
                 </div>
 
                 {/* Seed */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-muted mb-1">
                     Seed <span className="text-red-400">*</span>
                   </label>
                   <input
@@ -213,21 +223,21 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
                     onChange={(e) =>
                       updateField('seed', e.target.value === '' ? '' : parseInt(e.target.value, 10))
                     }
-                    className="w-full px-3 py-2 bg-[#1A1A1A] border border-[#D4A843]/20 rounded-md text-white placeholder-gray-500 focus:outline-none focus:border-[#D4A843]/60"
+                    className="w-full px-3 py-2 bg-surface-hover border border-accent/20 rounded-md text-foreground placeholder-dim focus:outline-none focus:border-accent/60"
                     placeholder="1-16"
                   />
                 </div>
 
                 {/* Region */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-muted mb-1">
                     Region <span className="text-red-400">*</span>
                   </label>
                   <select
                     required
                     value={formData.region}
                     onChange={(e) => updateField('region', e.target.value)}
-                    className="w-full px-3 py-2 bg-[#1A1A1A] border border-[#D4A843]/20 rounded-md text-white focus:outline-none focus:border-[#D4A843]/60"
+                    className="w-full px-3 py-2 bg-surface-hover border border-accent/20 rounded-md text-foreground focus:outline-none focus:border-accent/60"
                   >
                     <option value="">Select region</option>
                     {REGIONS.map((r) => (
@@ -242,26 +252,26 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Instrument */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-muted mb-1">
                     Instrument
                   </label>
                   <input
                     type="text"
                     value={formData.instrument}
                     onChange={(e) => updateField('instrument', e.target.value)}
-                    className="w-full px-3 py-2 bg-[#1A1A1A] border border-[#D4A843]/20 rounded-md text-white placeholder-gray-500 focus:outline-none focus:border-[#D4A843]/60"
+                    className="w-full px-3 py-2 bg-surface-hover border border-accent/20 rounded-md text-foreground placeholder-dim focus:outline-none focus:border-accent/60"
                     placeholder="e.g. Vocals, Trumpet, Piano"
                   />
                 </div>
 
                 {/* Era */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Era</label>
+                  <label className="block text-sm font-medium text-muted mb-1">Era</label>
                   <input
                     type="text"
                     value={formData.era}
                     onChange={(e) => updateField('era', e.target.value)}
-                    className="w-full px-3 py-2 bg-[#1A1A1A] border border-[#D4A843]/20 rounded-md text-white placeholder-gray-500 focus:outline-none focus:border-[#D4A843]/60"
+                    className="w-full px-3 py-2 bg-surface-hover border border-accent/20 rounded-md text-foreground placeholder-dim focus:outline-none focus:border-accent/60"
                     placeholder="e.g. 1930s-1960s"
                   />
                 </div>
@@ -270,28 +280,28 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Featured Track URL */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-muted mb-1">
                     Featured Track URL
                   </label>
                   <input
                     type="text"
                     value={formData.featured_track_url}
                     onChange={(e) => updateField('featured_track_url', e.target.value)}
-                    className="w-full px-3 py-2 bg-[#1A1A1A] border border-[#D4A843]/20 rounded-md text-white placeholder-gray-500 focus:outline-none focus:border-[#D4A843]/60"
+                    className="w-full px-3 py-2 bg-surface-hover border border-accent/20 rounded-md text-foreground placeholder-dim focus:outline-none focus:border-accent/60"
                     placeholder="https://..."
                   />
                 </div>
 
                 {/* Featured Track Title */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                  <label className="block text-sm font-medium text-muted mb-1">
                     Featured Track Title
                   </label>
                   <input
                     type="text"
                     value={formData.featured_track_title}
                     onChange={(e) => updateField('featured_track_title', e.target.value)}
-                    className="w-full px-3 py-2 bg-[#1A1A1A] border border-[#D4A843]/20 rounded-md text-white placeholder-gray-500 focus:outline-none focus:border-[#D4A843]/60"
+                    className="w-full px-3 py-2 bg-surface-hover border border-accent/20 rounded-md text-foreground placeholder-dim focus:outline-none focus:border-accent/60"
                     placeholder="e.g. A-Tisket, A-Tasket"
                   />
                 </div>
@@ -299,14 +309,105 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
 
               {/* Bio */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Bio</label>
+                <label className="block text-sm font-medium text-muted mb-1">Bio</label>
                 <textarea
                   value={formData.bio}
                   onChange={(e) => updateField('bio', e.target.value)}
                   rows={3}
-                  className="w-full px-3 py-2 bg-[#1A1A1A] border border-[#D4A843]/20 rounded-md text-white placeholder-gray-500 focus:outline-none focus:border-[#D4A843]/60 resize-y"
+                  className="w-full px-3 py-2 bg-surface-hover border border-accent/20 rounded-md text-foreground placeholder-dim focus:outline-none focus:border-accent/60 resize-y"
                   placeholder="Brief biography of the artist..."
                 />
+              </div>
+
+              {/* Media Links */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-sm font-medium text-muted">
+                    Media Links
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        media: [...prev.media, { ...emptyMediaLink }],
+                      }))
+                    }
+                    className="px-2 py-1 text-xs bg-accent/10 text-accent border border-accent/30 rounded hover:bg-accent/20 transition-colors"
+                  >
+                    + Add Link
+                  </button>
+                </div>
+                {formData.media.length === 0 && (
+                  <p className="text-xs text-dim">No media links yet.</p>
+                )}
+                <div className="space-y-2">
+                  {formData.media.map((link, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-start gap-2 p-3 bg-surface-hover border border-accent/10 rounded-md"
+                    >
+                      <select
+                        value={link.type}
+                        onChange={(e) => {
+                          const updated = [...formData.media];
+                          updated[idx] = { ...updated[idx], type: e.target.value as 'video' | 'audio' };
+                          setFormData((prev) => ({ ...prev, media: updated }));
+                        }}
+                        className="px-2 py-1.5 bg-background border border-accent/20 rounded text-foreground text-xs focus:outline-none focus:border-accent/60 w-20"
+                      >
+                        <option value="video">Video</option>
+                        <option value="audio">Audio</option>
+                      </select>
+                      <input
+                        type="text"
+                        value={link.url}
+                        onChange={(e) => {
+                          const updated = [...formData.media];
+                          updated[idx] = { ...updated[idx], url: e.target.value };
+                          setFormData((prev) => ({ ...prev, media: updated }));
+                        }}
+                        placeholder="URL"
+                        className="flex-1 min-w-0 px-2 py-1.5 bg-background border border-accent/20 rounded text-foreground placeholder-dim text-xs focus:outline-none focus:border-accent/60"
+                      />
+                      <input
+                        type="text"
+                        value={link.title}
+                        onChange={(e) => {
+                          const updated = [...formData.media];
+                          updated[idx] = { ...updated[idx], title: e.target.value };
+                          setFormData((prev) => ({ ...prev, media: updated }));
+                        }}
+                        placeholder="Title"
+                        className="w-40 px-2 py-1.5 bg-background border border-accent/20 rounded text-foreground placeholder-dim text-xs focus:outline-none focus:border-accent/60"
+                      />
+                      <input
+                        type="text"
+                        value={link.source}
+                        onChange={(e) => {
+                          const updated = [...formData.media];
+                          updated[idx] = { ...updated[idx], source: e.target.value };
+                          setFormData((prev) => ({ ...prev, media: updated }));
+                        }}
+                        placeholder="Source"
+                        className="w-24 px-2 py-1.5 bg-background border border-accent/20 rounded text-foreground placeholder-dim text-xs focus:outline-none focus:border-accent/60"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            media: prev.media.filter((_, i) => i !== idx),
+                          }));
+                        }}
+                        className="px-2 py-1.5 text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded transition-colors text-xs"
+                        title="Remove"
+                      >
+                        X
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               {/* Actions */}
@@ -314,7 +415,7 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-5 py-2 bg-[#D4A843] text-black font-semibold rounded-md hover:bg-[#C49A3A] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="px-5 py-2 bg-accent text-black font-semibold rounded-md hover:bg-accent-light disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {loading
                     ? 'Saving...'
@@ -325,7 +426,7 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
                 <button
                   type="button"
                   onClick={cancelForm}
-                  className="px-5 py-2 border border-gray-600 text-gray-300 rounded-md hover:border-gray-400 hover:text-white transition-colors"
+                  className="px-5 py-2 border border-gray-600 text-muted rounded-md hover:border-gray-400 hover:text-foreground transition-colors"
                 >
                   Cancel
                 </button>
@@ -343,16 +444,19 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
             return (
               <div
                 key={region}
-                className="bg-[#111111] border border-[#D4A843]/20 rounded-lg overflow-hidden"
+                className="bg-surface border border-accent/20 rounded-lg overflow-hidden"
               >
                 {/* Region header */}
-                <button
+                <div
                   onClick={() => toggleRegion(region)}
-                  className="w-full flex items-center justify-between px-6 py-4 hover:bg-[#1A1A1A] transition-colors"
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleRegion(region); }}
+                  className="w-full flex items-center justify-between px-6 py-4 hover:bg-surface-hover transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
                     <svg
-                      className={`w-4 h-4 text-[#D4A843] transition-transform ${
+                      className={`w-4 h-4 text-accent transition-transform ${
                         isCollapsed ? '' : 'rotate-90'
                       }`}
                       fill="none"
@@ -366,10 +470,10 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
                         d="M9 5l7 7-7 7"
                       />
                     </svg>
-                    <h2 className="text-lg font-semibold text-[#D4A843]">
+                    <h2 className="text-lg font-semibold text-accent">
                       {REGION_LABELS[region]}
                     </h2>
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-dim">
                       ({regionArtists.length}/16 artists)
                     </span>
                   </div>
@@ -378,27 +482,28 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
                       e.stopPropagation();
                       startAdd(region);
                     }}
-                    className="px-3 py-1 text-sm bg-[#D4A843]/10 text-[#D4A843] border border-[#D4A843]/30 rounded-md hover:bg-[#D4A843]/20 transition-colors"
+                    className="px-3 py-1 text-sm bg-accent/10 text-accent border border-accent/30 rounded-md hover:bg-accent/20 transition-colors"
                   >
                     + Add Artist
                   </button>
-                </button>
+                </div>
 
                 {/* Artist list */}
                 {!isCollapsed && (
-                  <div className="border-t border-[#D4A843]/10">
+                  <div className="border-t border-accent/10">
                     {regionArtists.length === 0 ? (
-                      <div className="px-6 py-8 text-center text-gray-500">
+                      <div className="px-6 py-8 text-center text-dim">
                         No artists in this region yet. Click &quot;Add Artist&quot; to get started.
                       </div>
                     ) : (
                       <table className="w-full">
                         <thead>
-                          <tr className="text-left text-xs uppercase tracking-wider text-gray-500 border-b border-[#D4A843]/10">
+                          <tr className="text-left text-xs uppercase tracking-wider text-dim border-b border-accent/10">
                             <th className="px-6 py-3 w-16">Seed</th>
                             <th className="px-6 py-3">Name</th>
                             <th className="px-6 py-3 hidden md:table-cell">Instrument</th>
                             <th className="px-6 py-3 hidden md:table-cell">Era</th>
+                            <th className="px-6 py-3 hidden md:table-cell w-16">Media</th>
                             <th className="px-6 py-3 w-32 text-right">Actions</th>
                           </tr>
                         </thead>
@@ -406,25 +511,32 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
                           {regionArtists.map((artist) => (
                             <tr
                               key={artist.id}
-                              className="border-b border-[#D4A843]/5 hover:bg-[#1A1A1A] transition-colors"
+                              className="border-b border-accent/5 hover:bg-surface-hover transition-colors"
                             >
                               <td className="px-6 py-3">
-                                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#D4A843]/10 text-[#D4A843] text-sm font-bold">
+                                <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-accent/10 text-accent text-sm font-bold">
                                   {artist.seed}
                                 </span>
                               </td>
                               <td className="px-6 py-3 font-medium">{artist.name}</td>
-                              <td className="px-6 py-3 text-gray-400 hidden md:table-cell">
+                              <td className="px-6 py-3 text-muted hidden md:table-cell">
                                 {artist.instrument || '--'}
                               </td>
-                              <td className="px-6 py-3 text-gray-400 hidden md:table-cell">
+                              <td className="px-6 py-3 text-muted hidden md:table-cell">
                                 {artist.era || '--'}
+                              </td>
+                              <td className="px-6 py-3 text-muted hidden md:table-cell">
+                                {artist.media && artist.media.length > 0 ? (
+                                  <span className="text-xs text-accent">{artist.media.length}</span>
+                                ) : (
+                                  <span className="text-dim">--</span>
+                                )}
                               </td>
                               <td className="px-6 py-3 text-right">
                                 <div className="flex items-center justify-end gap-2">
                                   <button
                                     onClick={() => startEdit(artist)}
-                                    className="px-3 py-1 text-xs text-[#D4A843] border border-[#D4A843]/30 rounded hover:bg-[#D4A843]/10 transition-colors"
+                                    className="px-3 py-1 text-xs text-accent border border-accent/30 rounded hover:bg-accent/10 transition-colors"
                                   >
                                     Edit
                                   </button>
@@ -450,7 +562,7 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
         </div>
 
         {/* Summary */}
-        <div className="mt-8 text-center text-gray-500 text-sm">
+        <div className="mt-8 text-center text-dim text-sm">
           {artists.length} / 64 artists configured
         </div>
       </div>

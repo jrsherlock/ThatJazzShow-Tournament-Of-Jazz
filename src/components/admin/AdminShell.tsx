@@ -27,16 +27,16 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   }
 
   return (
-    <div className="min-h-screen flex bg-[#0A0A0A]">
+    <div className="min-h-screen flex bg-background">
       {/* Sidebar */}
-      <aside className="w-64 shrink-0 bg-[#1A1A1A] border-r border-zinc-800 flex flex-col">
+      <aside className="w-64 shrink-0 bg-surface-hover border-r border-subtle flex flex-col">
         {/* Logo / Title */}
-        <div className="p-5 border-b border-zinc-800">
+        <div className="p-5 border-b border-subtle">
           <Link href="/admin" className="block">
-            <h1 className="text-lg font-bold text-[#D4A843] tracking-wide">
+            <h1 className="text-lg font-bold text-accent tracking-wide">
               Tournament of Jazz
             </h1>
-            <p className="text-xs text-zinc-500 mt-0.5">Admin Panel</p>
+            <p className="text-xs text-dim mt-0.5">Admin Panel</p>
           </Link>
         </div>
 
@@ -48,8 +48,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               href={href}
               className={`block px-3 py-2 rounded text-sm transition-colors ${
                 isActive(href)
-                  ? 'bg-[#D4A843]/15 text-[#D4A843] font-medium'
-                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/60'
+                  ? 'bg-accent/15 text-accent font-medium'
+                  : 'text-muted hover:text-zinc-200 hover:bg-charcoal/60'
               }`}
             >
               {label}
@@ -58,10 +58,10 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         </nav>
 
         {/* Logout */}
-        <div className="p-3 border-t border-zinc-800">
+        <div className="p-3 border-t border-subtle">
           <button
             onClick={handleLogout}
-            className="w-full px-3 py-2 text-sm text-zinc-400 hover:text-red-400 hover:bg-zinc-800/60 rounded transition-colors text-left cursor-pointer"
+            className="w-full px-3 py-2 text-sm text-muted hover:text-red-400 hover:bg-charcoal/60 rounded transition-colors text-left cursor-pointer"
           >
             Sign Out
           </button>

@@ -17,8 +17,8 @@ export function ScoreBreakdown({ score, revealedThrough }: ScoreBreakdownProps) 
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   return (
-    <div className="rounded-xl bg-[#1A1A1A] border border-gold/20 p-6">
-      <h3 className="font-display text-xl font-bold text-gold mb-6 text-center">
+    <div className="rounded-xl bg-surface-hover border border-accent/20 p-6">
+      <h3 className="font-display text-xl font-bold text-accent mb-6 text-center">
         Score Breakdown
       </h3>
 
@@ -41,7 +41,7 @@ export function ScoreBreakdown({ score, revealedThrough }: ScoreBreakdownProps) 
               cy="60"
               r={radius}
               fill="none"
-              stroke="#D4A843"
+              stroke="var(--color-champion)"
               strokeWidth="8"
               strokeLinecap="round"
               strokeDasharray={circumference}
@@ -50,15 +50,15 @@ export function ScoreBreakdown({ score, revealedThrough }: ScoreBreakdownProps) 
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="font-display text-3xl font-bold text-gold">
+            <span className="font-display text-3xl font-bold text-accent">
               {score.total}
             </span>
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-muted">
               / {score.maxPossible}
             </span>
           </div>
         </div>
-        <p className="text-sm text-gray-400 mt-3">
+        <p className="text-sm text-muted mt-3">
           {Math.round(percentage)}% of maximum possible
         </p>
       </div>
@@ -67,11 +67,11 @@ export function ScoreBreakdown({ score, revealedThrough }: ScoreBreakdownProps) 
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gold/20">
-              <th className="text-left py-2 px-3 text-gray-400 font-medium">Round</th>
-              <th className="text-center py-2 px-3 text-gray-400 font-medium">Correct</th>
-              <th className="text-center py-2 px-3 text-gray-400 font-medium">Points</th>
-              <th className="text-center py-2 px-3 text-gray-400 font-medium">Max</th>
+            <tr className="border-b border-accent/20">
+              <th className="text-left py-2 px-3 text-muted font-medium">Round</th>
+              <th className="text-center py-2 px-3 text-muted font-medium">Correct</th>
+              <th className="text-center py-2 px-3 text-muted font-medium">Points</th>
+              <th className="text-center py-2 px-3 text-muted font-medium">Max</th>
             </tr>
           </thead>
           <tbody>
@@ -88,18 +88,18 @@ export function ScoreBreakdown({ score, revealedThrough }: ScoreBreakdownProps) 
                   key={round}
                   className="border-b border-white/5 last:border-b-0"
                 >
-                  <td className="py-2.5 px-3 text-white font-medium">
+                  <td className="py-2.5 px-3 text-foreground font-medium">
                     {ROUND_NAMES[round]}
                   </td>
                   {isRevealed ? (
                     <>
-                      <td className="text-center py-2.5 px-3 text-gray-300">
+                      <td className="text-center py-2.5 px-3 text-muted">
                         {correctPicks} / {GAMES_PER_ROUND[round]}
                       </td>
-                      <td className="text-center py-2.5 px-3 text-gold font-semibold">
+                      <td className="text-center py-2.5 px-3 text-accent font-semibold">
                         {roundPoints}
                       </td>
-                      <td className="text-center py-2.5 px-3 text-gray-500">
+                      <td className="text-center py-2.5 px-3 text-dim">
                         {maxForRound}
                       </td>
                     </>

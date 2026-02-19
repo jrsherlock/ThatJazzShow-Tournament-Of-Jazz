@@ -51,11 +51,11 @@ export default async function BracketPage({ params }: PageProps) {
 
   if (submissionError || !submission) {
     return (
-      <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center px-4">
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
         <div className="text-center max-w-md">
-          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-[#1A1A1A] border border-gold/20 flex items-center justify-center">
+          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-surface-hover border border-accent/20 flex items-center justify-center">
             <svg
-              className="w-8 h-8 text-gold/60"
+              className="w-8 h-8 text-accent/60"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -68,15 +68,15 @@ export default async function BracketPage({ params }: PageProps) {
               />
             </svg>
           </div>
-          <h1 className="font-display text-2xl font-semibold text-gold mb-3">
+          <h1 className="font-display text-2xl font-semibold text-accent mb-3">
             Bracket Not Found
           </h1>
-          <p className="text-zinc-400 text-sm leading-relaxed mb-6">
+          <p className="text-muted text-sm leading-relaxed mb-6">
             This bracket link is invalid or has been removed. Double-check the URL and try again.
           </p>
           <a
             href="/"
-            className="inline-block px-5 py-2 text-sm text-gold border border-gold/30 rounded-lg hover:bg-gold/10 transition-colors"
+            className="inline-block px-5 py-2 text-sm text-accent border border-accent/30 rounded-lg hover:bg-accent/10 transition-colors"
           >
             Back to Home
           </a>

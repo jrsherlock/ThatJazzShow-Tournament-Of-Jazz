@@ -17,11 +17,11 @@ export default async function PlayPage() {
 
   if (!tournament || tournament.status !== 'open') {
     return (
-      <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center px-4">
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
         <div className="text-center max-w-md">
-          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-[#1A1A1A] border border-[#D4A843]/20 flex items-center justify-center">
+          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-surface-hover border border-accent/20 flex items-center justify-center">
             <svg
-              className="w-8 h-8 text-[#D4A843]/60"
+              className="w-8 h-8 text-accent/60"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -34,10 +34,10 @@ export default async function PlayPage() {
               />
             </svg>
           </div>
-          <h1 className="font-[family-name:var(--font-playfair)] text-2xl font-semibold text-[#D4A843] mb-3">
+          <h1 className="font-display text-2xl font-semibold text-accent mb-3">
             The Tournament of Jazz
           </h1>
-          <p className="text-zinc-400 text-sm leading-relaxed mb-6">
+          <p className="text-muted text-sm leading-relaxed mb-6">
             {tournament?.status === 'setup'
               ? 'The tournament is being set up. Check back soon to fill out your bracket.'
               : tournament?.status === 'closed'
@@ -50,7 +50,7 @@ export default async function PlayPage() {
           </p>
           <a
             href="/"
-            className="inline-block px-5 py-2 text-sm text-[#D4A843] border border-[#D4A843]/30 rounded-lg hover:bg-[#D4A843]/10 transition-colors"
+            className="inline-block px-5 py-2 text-sm text-accent border border-accent/30 rounded-lg hover:bg-accent/10 transition-colors"
           >
             Back to Home
           </a>

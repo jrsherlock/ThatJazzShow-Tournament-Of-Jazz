@@ -81,14 +81,14 @@ export function MatchupPreviewEditor({ tournament, artists, existingPreviews }: 
   return (
     <div>
       {/* Progress */}
-      <div className="mb-6 p-4 bg-[#1A1A1A] rounded-lg border border-[#D4A843]/20">
+      <div className="mb-6 p-4 bg-surface-hover rounded-lg border border-accent/20">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-gray-400">Previews Written</span>
-          <span className="text-[#D4A843] font-bold">{totalPreviews} / 32</span>
+          <span className="text-muted">Previews Written</span>
+          <span className="text-accent font-bold">{totalPreviews} / 32</span>
         </div>
-        <div className="w-full bg-[#0A0A0A] rounded-full h-2">
+        <div className="w-full bg-background rounded-full h-2">
           <div
-            className="bg-[#D4A843] h-2 rounded-full transition-all"
+            className="bg-accent h-2 rounded-full transition-all"
             style={{ width: `${(totalPreviews / 32) * 100}%` }}
           />
         </div>
@@ -105,8 +105,8 @@ export function MatchupPreviewEditor({ tournament, artists, existingPreviews }: 
               onClick={() => setActiveRegion(region)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 activeRegion === region
-                  ? 'bg-[#D4A843] text-[#0A0A0A]'
-                  : 'bg-[#1A1A1A] text-gray-400 hover:text-white border border-[#D4A843]/20'
+                  ? 'bg-accent text-white'
+                  : 'bg-surface-hover text-muted hover:text-foreground border border-accent/20'
               }`}
             >
               {REGION_LABELS[region]} ({written}/8)
@@ -120,24 +120,24 @@ export function MatchupPreviewEditor({ tournament, artists, existingPreviews }: 
         {matchups.map(({ key, seedA, seedB, artistA, artistB, preview }) => (
           <div
             key={key}
-            className="bg-[#1A1A1A] rounded-lg border border-[#D4A843]/20 overflow-hidden"
+            className="bg-surface-hover rounded-lg border border-accent/20 overflow-hidden"
           >
             {/* Matchup Header */}
             <div className="p-4 flex items-center justify-between">
               <div className="flex items-center gap-6">
                 <div className="text-center">
-                  <span className="text-xs text-gray-500">#{seedA}</span>
-                  <p className="text-white font-medium">{artistA?.name ?? 'TBD'}</p>
+                  <span className="text-xs text-dim">#{seedA}</span>
+                  <p className="text-foreground font-medium">{artistA?.name ?? 'TBD'}</p>
                   {artistA?.instrument && (
-                    <p className="text-xs text-gray-500">{artistA.instrument}</p>
+                    <p className="text-xs text-dim">{artistA.instrument}</p>
                   )}
                 </div>
-                <span className="text-[#D4A843] font-bold text-lg">vs</span>
+                <span className="text-accent font-bold text-lg">vs</span>
                 <div className="text-center">
-                  <span className="text-xs text-gray-500">#{seedB}</span>
-                  <p className="text-white font-medium">{artistB?.name ?? 'TBD'}</p>
+                  <span className="text-xs text-dim">#{seedB}</span>
+                  <p className="text-foreground font-medium">{artistB?.name ?? 'TBD'}</p>
                   {artistB?.instrument && (
-                    <p className="text-xs text-gray-500">{artistB.instrument}</p>
+                    <p className="text-xs text-dim">{artistB.instrument}</p>
                   )}
                 </div>
               </div>
@@ -148,13 +148,13 @@ export function MatchupPreviewEditor({ tournament, artists, existingPreviews }: 
                     Written
                   </span>
                 ) : (
-                  <span className="text-xs px-2 py-1 bg-gray-800 text-gray-500 rounded">
+                  <span className="text-xs px-2 py-1 bg-gray-800 text-dim rounded">
                     Not written
                   </span>
                 )}
                 <button
                   onClick={() => startEdit(key, preview)}
-                  className="px-3 py-1.5 text-sm bg-[#D4A843]/10 text-[#D4A843] rounded hover:bg-[#D4A843]/20 transition-colors"
+                  className="px-3 py-1.5 text-sm bg-accent/10 text-accent rounded hover:bg-accent/20 transition-colors"
                 >
                   {preview ? 'Edit' : 'Write'}
                 </button>
@@ -163,48 +163,48 @@ export function MatchupPreviewEditor({ tournament, artists, existingPreviews }: 
 
             {/* Preview snippet */}
             {preview && editingKey !== key && (
-              <div className="px-4 pb-4 border-t border-[#D4A843]/10">
-                <p className="text-sm text-[#D4A843] font-medium mt-3">{preview.headline}</p>
-                <p className="text-sm text-gray-400 mt-1 line-clamp-2">{preview.preview_text}</p>
+              <div className="px-4 pb-4 border-t border-accent/10">
+                <p className="text-sm text-accent font-medium mt-3">{preview.headline}</p>
+                <p className="text-sm text-muted mt-1 line-clamp-2">{preview.preview_text}</p>
               </div>
             )}
 
             {/* Edit Form */}
             {editingKey === key && (
-              <div className="p-4 border-t border-[#D4A843]/20 bg-[#0A0A0A]/50 space-y-4">
+              <div className="p-4 border-t border-accent/20 bg-background/50 space-y-4">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">
+                  <label className="block text-sm text-muted mb-1">
                     Headline <span className="text-gray-600">(e.g., &quot;The Queen of Scat vs. The Chairman of Swing&quot;)</span>
                   </label>
                   <input
                     type="text"
                     value={headline}
                     onChange={(e) => setHeadline(e.target.value)}
-                    className="w-full bg-[#1A1A1A] border border-[#D4A843]/30 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#D4A843]"
+                    className="w-full bg-surface-hover border border-accent/30 rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-accent"
                     placeholder="Enter a catchy headline..."
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">
+                  <label className="block text-sm text-muted mb-1">
                     Preview Text <span className="text-gray-600">(your analysis of the matchup)</span>
                   </label>
                   <textarea
                     value={previewText}
                     onChange={(e) => setPreviewText(e.target.value)}
                     rows={5}
-                    className="w-full bg-[#1A1A1A] border border-[#D4A843]/30 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#D4A843] resize-y"
+                    className="w-full bg-surface-hover border border-accent/30 rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-accent resize-y"
                     placeholder="Write your matchup analysis..."
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">
+                  <label className="block text-sm text-muted mb-1">
                     Fun Fact <span className="text-gray-600">(optional trivia or stat)</span>
                   </label>
                   <input
                     type="text"
                     value={funFact}
                     onChange={(e) => setFunFact(e.target.value)}
-                    className="w-full bg-[#1A1A1A] border border-[#D4A843]/30 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#D4A843]"
+                    className="w-full bg-surface-hover border border-accent/30 rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-accent"
                     placeholder="e.g., Ella recorded over 200 albums"
                   />
                 </div>
@@ -212,13 +212,13 @@ export function MatchupPreviewEditor({ tournament, artists, existingPreviews }: 
                   <button
                     onClick={() => savePreview(key)}
                     disabled={saving || !previewText.trim()}
-                    className="px-4 py-2 bg-[#D4A843] text-[#0A0A0A] font-medium rounded-lg hover:bg-[#C49A3A] transition-colors disabled:opacity-50"
+                    className="px-4 py-2 bg-accent text-white font-medium rounded-lg hover:bg-accent-light transition-colors disabled:opacity-50"
                   >
                     {saving ? 'Saving...' : 'Save Preview'}
                   </button>
                   <button
                     onClick={cancelEdit}
-                    className="px-4 py-2 bg-[#1A1A1A] text-gray-400 rounded-lg hover:text-white transition-colors"
+                    className="px-4 py-2 bg-surface-hover text-muted rounded-lg hover:text-foreground transition-colors"
                   >
                     Cancel
                   </button>

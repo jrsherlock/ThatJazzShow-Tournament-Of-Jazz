@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import type { Artist, Submission, MasterBracket, Tournament, ScoreResult, Region } from '@/lib/types';
-import { REGIONS, REGION_LABELS, ROUND_NAMES } from '@/lib/constants';
+import { REGIONS, REGION_LABELS, REGION_COLORS, ROUND_NAMES } from '@/lib/constants';
 import {
   matchupKey,
   matchupsInRound,
@@ -107,7 +107,7 @@ function statusClasses(status: PickStatus): string {
       return 'border-red-500/70 bg-red-500/[0.06]';
     case 'pending':
     default:
-      return 'border-white/10 bg-white/[0.02]';
+      return 'border-white/10 bg-foreground/[0.02]';
   }
 }
 
@@ -133,7 +133,7 @@ function statusBadge(status: PickStatus): React.ReactNode {
       );
     default:
       return (
-        <span className="inline-flex items-center text-[10px] font-semibold text-gray-500 bg-white/5 px-2 py-0.5 rounded-full">
+        <span className="inline-flex items-center text-[10px] font-semibold text-dim bg-foreground/5 px-2 py-0.5 rounded-full">
           Pending
         </span>
       );
@@ -148,7 +148,7 @@ function ViewerMatchup({ matchup }: { matchup: ResolvedMatchup }) {
     <div className={`rounded-lg border p-3 ${statusClasses(matchup.status)}`}>
       {/* Header row: round badge + status */}
       <div className="flex items-center justify-between mb-2">
-        <span className="text-[10px] font-mono text-gray-500 uppercase tracking-wider">
+        <span className="text-[10px] font-mono text-dim uppercase tracking-wider">
           {ROUND_NAMES[matchup.round]}
         </span>
         {statusBadge(matchup.status)}
@@ -168,9 +168,9 @@ function ViewerMatchup({ matchup }: { matchup: ResolvedMatchup }) {
 
       {/* VS divider */}
       <div className="flex items-center gap-2 py-1 px-2">
-        <div className="flex-1 h-px bg-gold/10" />
-        <span className="text-[10px] font-bold text-gold/40 tracking-widest uppercase">vs</span>
-        <div className="flex-1 h-px bg-gold/10" />
+        <div className="flex-1 h-px bg-accent/10" />
+        <span className="text-[10px] font-bold text-accent/40 tracking-widest uppercase">vs</span>
+        <div className="flex-1 h-px bg-accent/10" />
       </div>
 
       {/* Artist B */}
@@ -187,8 +187,8 @@ function ViewerMatchup({ matchup }: { matchup: ResolvedMatchup }) {
 
       {/* Commentary */}
       {matchup.commentary && (
-        <div className="mt-2 px-2 py-1.5 rounded bg-gold/5 border border-gold/10">
-          <p className="text-xs text-gray-400 italic leading-relaxed">
+        <div className="mt-2 px-2 py-1.5 rounded bg-accent/5 border border-accent/10">
+          <p className="text-xs text-muted italic leading-relaxed">
             &quot;{matchup.commentary}&quot;
           </p>
         </div>
@@ -199,7 +199,7 @@ function ViewerMatchup({ matchup }: { matchup: ResolvedMatchup }) {
 
 function TBDSlot() {
   return (
-    <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-[#0A0A0A] border border-transparent">
+    <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-background border border-transparent">
       <span className="text-xs text-gray-600 font-mono min-w-[2rem]">(?)</span>
       <span className="text-sm text-gray-600 italic">TBD</span>
     </div>
@@ -226,17 +226,23 @@ function RegionSection({
     byRound[m.round].push(m);
   }
 
+  const colors = REGION_COLORS[region];
+
   return (
     <section className="mb-8">
-      <h3 className="font-display text-lg font-bold text-gold mb-4 art-deco-divider">
-        {label}
-      </h3>
+      <div className="flex items-center gap-3 mb-4">
+        <div className="h-1 w-10 rounded-full" style={{ backgroundColor: colors.primary }} />
+        <h3 className="font-display text-lg font-bold" style={{ color: colors.primary }}>
+          {label}
+        </h3>
+        <div className="flex-1 h-px" style={{ background: `linear-gradient(to right, ${colors.primary}40, transparent)` }} />
+      </div>
       {[1, 2, 3, 4].map((round) => {
         const roundMatchups = byRound[round];
         if (!roundMatchups || roundMatchups.length === 0) return null;
         return (
           <div key={`${region}-${round}`} className="mb-4">
-            <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-1">
+            <h4 className="text-xs font-semibold text-dim uppercase tracking-wider mb-2 px-1">
               {ROUND_NAMES[round]}
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -262,13 +268,13 @@ function CrossRegionSection({ matchups }: { matchups: ResolvedMatchup[] }) {
 
   return (
     <section className="mb-8">
-      <h3 className="font-display text-lg font-bold text-gold mb-4 art-deco-divider">
+      <h3 className="font-display text-lg font-bold text-accent mb-4 blue-note-divider">
         The Final Stage
       </h3>
 
       {finalFour.length > 0 && (
         <div className="mb-4">
-          <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-1">
+          <h4 className="text-xs font-semibold text-dim uppercase tracking-wider mb-2 px-1">
             {ROUND_NAMES[5]}
           </h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -281,7 +287,7 @@ function CrossRegionSection({ matchups }: { matchups: ResolvedMatchup[] }) {
 
       {championship.length > 0 && (
         <div className="mb-4">
-          <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2 px-1">
+          <h4 className="text-xs font-semibold text-dim uppercase tracking-wider mb-2 px-1">
             {ROUND_NAMES[6]}
           </h4>
           <div className="grid grid-cols-1 max-w-md mx-auto gap-3">
@@ -350,33 +356,33 @@ export function BracketViewer({
   });
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A]">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-gold/20 bg-[#1A1A1A]/80 backdrop-blur-sm sticky top-0 z-30">
+      <header className="border-b border-accent/20 bg-surface-hover/80 backdrop-blur-sm sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:py-5">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
-              <h1 className="font-display text-2xl sm:text-3xl font-bold text-gold">
+              <h1 className="font-display text-2xl sm:text-3xl font-bold text-accent">
                 {submission.display_name}&apos;s Bracket
               </h1>
-              <p className="text-sm text-gray-400 mt-1">
+              <p className="text-sm text-muted mt-1">
                 {tournament.name} &middot; Submitted {submissionDate}
               </p>
             </div>
 
             {/* Quick score badge */}
             {score && masterBracket && masterBracket.revealed_through > 0 && (
-              <div className="flex items-center gap-3 bg-gold/10 border border-gold/30 rounded-lg px-4 py-2.5">
+              <div className="flex items-center gap-3 bg-accent/10 border border-accent/30 rounded-lg px-4 py-2.5">
                 <div className="text-right">
-                  <p className="text-xs text-gray-400">Total Score</p>
-                  <p className="font-display text-2xl font-bold text-gold leading-none">
+                  <p className="text-xs text-muted">Total Score</p>
+                  <p className="font-display text-2xl font-bold text-accent leading-none">
                     {score.total}
                   </p>
                 </div>
-                <div className="w-px h-8 bg-gold/20" />
+                <div className="w-px h-8 bg-accent/20" />
                 <div>
-                  <p className="text-xs text-gray-400">Max Possible</p>
-                  <p className="text-sm text-gray-300 font-semibold">
+                  <p className="text-xs text-muted">Max Possible</p>
+                  <p className="text-sm text-muted font-semibold">
                     {score.maxPossible}
                   </p>
                 </div>

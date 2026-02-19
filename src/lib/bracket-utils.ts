@@ -209,6 +209,42 @@ export function isBracketComplete(picks: Record<string, Pick>): boolean {
 }
 
 /**
+ * Count how many picks have been made within a single region (rounds 1-4).
+ * Max = 15 (8 + 4 + 2 + 1).
+ */
+export function getRegionPickCount(
+  picks: Record<string, Pick>,
+  regionIndex: number
+): number {
+  let count = 0;
+  for (let i = 0; i < 8; i++) {
+    if (picks[matchupKey(1, regionIndex * 8 + i)]) count++;
+  }
+  for (let i = 0; i < 4; i++) {
+    if (picks[matchupKey(2, regionIndex * 4 + i)]) count++;
+  }
+  for (let i = 0; i < 2; i++) {
+    if (picks[matchupKey(3, regionIndex * 2 + i)]) count++;
+  }
+  if (picks[matchupKey(4, regionIndex)]) count++;
+  return count;
+}
+
+/**
+ * Get the artist who won a region's Elite 8 matchup (round 4).
+ * Returns null if not yet picked.
+ */
+export function getRegionWinner(
+  picks: Record<string, Pick>,
+  artists: Artist[],
+  regionIndex: number
+): Artist | null {
+  const pick = picks[matchupKey(4, regionIndex)];
+  if (!pick) return null;
+  return artists.find((a) => a.id === pick.winnerId) ?? null;
+}
+
+/**
  * Get the region for a matchup at any round.
  * Rounds 1-4 are within regions. Round 5 (Final Four) and 6 (Championship) are cross-region.
  */

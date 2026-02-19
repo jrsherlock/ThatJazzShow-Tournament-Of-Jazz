@@ -42,37 +42,37 @@ export default function SubmissionsTable({
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-bold text-[#D4A843] tracking-wide">
+        <h1 className="text-2xl font-bold text-accent tracking-wide">
           Submissions
         </h1>
-        <p className="text-zinc-400 text-sm mt-1">
+        <p className="text-muted text-sm mt-1">
           View all bracket submissions and scores for {tournamentName}.
         </p>
       </div>
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-[#1A1A1A] border border-[#D4A843]/20 rounded-lg p-4">
-          <p className="text-xs uppercase tracking-wider text-zinc-500 mb-1">
+        <div className="bg-surface-hover border border-accent/20 rounded-lg p-4">
+          <p className="text-xs uppercase tracking-wider text-dim mb-1">
             Total Submissions
           </p>
-          <p className="text-2xl font-bold text-[#D4A843]">
+          <p className="text-2xl font-bold text-accent">
             {rankedSubmissions.length}
           </p>
         </div>
 
-        <div className="bg-[#1A1A1A] border border-[#D4A843]/20 rounded-lg p-4">
-          <p className="text-xs uppercase tracking-wider text-zinc-500 mb-1">
+        <div className="bg-surface-hover border border-accent/20 rounded-lg p-4">
+          <p className="text-xs uppercase tracking-wider text-dim mb-1">
             Rounds Revealed
           </p>
           <p className="text-2xl font-bold text-zinc-200">
             {revealedThroughRound}{' '}
-            <span className="text-sm font-normal text-zinc-500">of 6</span>
+            <span className="text-sm font-normal text-dim">of 6</span>
           </p>
         </div>
 
-        <div className="bg-[#1A1A1A] border border-[#D4A843]/20 rounded-lg p-4">
-          <p className="text-xs uppercase tracking-wider text-zinc-500 mb-1">
+        <div className="bg-surface-hover border border-accent/20 rounded-lg p-4">
+          <p className="text-xs uppercase tracking-wider text-dim mb-1">
             {revealedThroughRound > 0 ? 'Leader Score' : 'Status'}
           </p>
           <p className="text-2xl font-bold text-zinc-200">
@@ -85,11 +85,11 @@ export default function SubmissionsTable({
 
       {/* No rounds revealed notice */}
       {revealedThroughRound === 0 && (
-        <div className="bg-[#1A1A1A] border border-[#D4A843]/20 rounded-lg px-4 py-3">
-          <p className="text-zinc-400 text-sm">
+        <div className="bg-surface-hover border border-accent/20 rounded-lg px-4 py-3">
+          <p className="text-muted text-sm">
             No rounds have been revealed yet. Scores will appear once the first round is revealed
             from the{' '}
-            <span className="text-[#D4A843]">Reveal</span> page.
+            <span className="text-accent">Reveal</span> page.
           </p>
         </div>
       )}
@@ -97,7 +97,7 @@ export default function SubmissionsTable({
       {/* No submissions */}
       {rankedSubmissions.length === 0 && (
         <div className="text-center py-16">
-          <p className="text-zinc-400 text-lg">No submissions yet.</p>
+          <p className="text-muted text-lg">No submissions yet.</p>
           <p className="text-zinc-600 text-sm mt-1">
             Submissions will appear here once participants submit their brackets.
           </p>
@@ -106,18 +106,18 @@ export default function SubmissionsTable({
 
       {/* Submissions Table */}
       {rankedSubmissions.length > 0 && (
-        <div className="bg-[#1A1A1A] border border-[#D4A843]/20 rounded-lg overflow-hidden">
+        <div className="bg-surface-hover border border-accent/20 rounded-lg overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-[#D4A843]/30">
-                  <th className="text-left px-4 py-3 text-[#D4A843] font-semibold uppercase tracking-wider text-xs w-16">
+                <tr className="border-b border-accent/30">
+                  <th className="text-left px-4 py-3 text-accent font-semibold uppercase tracking-wider text-xs w-16">
                     Rank
                   </th>
-                  <th className="text-left px-4 py-3 text-[#D4A843] font-semibold uppercase tracking-wider text-xs">
+                  <th className="text-left px-4 py-3 text-accent font-semibold uppercase tracking-wider text-xs">
                     Name
                   </th>
-                  <th className="text-center px-4 py-3 text-[#D4A843] font-semibold uppercase tracking-wider text-xs w-20">
+                  <th className="text-center px-4 py-3 text-accent font-semibold uppercase tracking-wider text-xs w-20">
                     Total
                   </th>
                   {[1, 2, 3, 4, 5, 6].map((round) => (
@@ -125,7 +125,7 @@ export default function SubmissionsTable({
                       key={round}
                       className={`text-center px-3 py-3 font-semibold uppercase tracking-wider text-xs w-16 ${
                         round <= revealedThroughRound
-                          ? 'text-[#D4A843]'
+                          ? 'text-accent'
                           : 'text-zinc-600'
                       }`}
                     >
@@ -143,20 +143,20 @@ export default function SubmissionsTable({
                     <Fragment key={submission.id}>
                       <tr
                         onClick={() => toggleExpand(submission.id)}
-                        className={`border-b border-zinc-800/60 cursor-pointer transition-colors hover:bg-[#D4A843]/5 ${
-                          isEven ? 'bg-[#1A1A1A]' : 'bg-[#151515]'
-                        } ${isExpanded ? 'bg-[#D4A843]/10 hover:bg-[#D4A843]/10' : ''}`}
+                        className={`border-b border-subtle/60 cursor-pointer transition-colors hover:bg-accent/5 ${
+                          isEven ? 'bg-surface-hover' : 'bg-[#151515]'
+                        } ${isExpanded ? 'bg-accent/10 hover:bg-accent/10' : ''}`}
                       >
                         <td className="px-4 py-3">
                           <span
                             className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold ${
                               submission.rank === 1
-                                ? 'bg-[#D4A843]/20 text-[#D4A843]'
+                                ? 'bg-accent/20 text-accent'
                                 : submission.rank === 2
-                                ? 'bg-zinc-600/20 text-zinc-300'
+                                ? 'bg-zinc-600/20 text-foreground'
                                 : submission.rank === 3
                                 ? 'bg-amber-800/20 text-amber-600'
-                                : 'text-zinc-500'
+                                : 'text-dim'
                             }`}
                           >
                             {submission.rank}
@@ -166,7 +166,7 @@ export default function SubmissionsTable({
                           <div className="flex items-center gap-2">
                             <span>{submission.displayName}</span>
                             <svg
-                              className={`w-4 h-4 text-zinc-500 transition-transform ${
+                              className={`w-4 h-4 text-dim transition-transform ${
                                 isExpanded ? 'rotate-180' : ''
                               }`}
                               fill="none"
@@ -183,7 +183,7 @@ export default function SubmissionsTable({
                           </div>
                         </td>
                         <td className="px-4 py-3 text-center">
-                          <span className="text-zinc-100 font-bold">
+                          <span className="text-foreground font-bold">
                             {revealedThroughRound > 0
                               ? submission.score.total
                               : '\u2014'}
@@ -194,7 +194,7 @@ export default function SubmissionsTable({
                             key={round}
                             className={`px-3 py-3 text-center text-xs ${
                               round <= revealedThroughRound
-                                ? 'text-zinc-300'
+                                ? 'text-foreground'
                                 : 'text-zinc-700'
                             }`}
                           >
@@ -209,12 +209,12 @@ export default function SubmissionsTable({
                       {isExpanded && (
                         <tr
                           className={
-                            isEven ? 'bg-[#1A1A1A]' : 'bg-[#151515]'
+                            isEven ? 'bg-surface-hover' : 'bg-[#151515]'
                           }
                         >
                           <td
                             colSpan={9}
-                            className="px-4 py-4 border-b border-zinc-800/60"
+                            className="px-4 py-4 border-b border-subtle/60"
                           >
                             <SubmissionDetails
                               submission={submission}
@@ -250,7 +250,7 @@ function SubmissionDetails({
     <div className="space-y-4 pl-8">
       {/* Score Breakdown */}
       <div>
-        <h4 className="text-xs uppercase tracking-wider text-zinc-500 mb-2">
+        <h4 className="text-xs uppercase tracking-wider text-dim mb-2">
           Score Breakdown
         </h4>
         <div className="flex flex-wrap gap-3">
@@ -264,13 +264,13 @@ function SubmissionDetails({
                 key={round}
                 className={`px-3 py-2 rounded border text-center min-w-[80px] ${
                   isRevealed
-                    ? 'border-[#D4A843]/30 bg-[#D4A843]/5'
-                    : 'border-zinc-800 bg-zinc-900/30'
+                    ? 'border-accent/30 bg-accent/5'
+                    : 'border-subtle bg-surface/30'
                 }`}
               >
                 <p
                   className={`text-xs mb-1 ${
-                    isRevealed ? 'text-[#D4A843]/70' : 'text-zinc-600'
+                    isRevealed ? 'text-accent/70' : 'text-zinc-600'
                   }`}
                 >
                   {ROUND_NAMES[round]}
@@ -289,20 +289,20 @@ function SubmissionDetails({
       </div>
 
       {/* Meta Info */}
-      <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-zinc-500">
+      <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-dim">
         <span>
           Submission ID:{' '}
-          <span className="text-zinc-400 font-mono">{submission.id.slice(0, 8)}...</span>
+          <span className="text-muted font-mono">{submission.id.slice(0, 8)}...</span>
         </span>
         <span>
           Total Score:{' '}
-          <span className="text-zinc-300 font-semibold">
+          <span className="text-foreground font-semibold">
             {revealedThroughRound > 0 ? `${submission.score.total} pts` : 'N/A'}
           </span>
         </span>
         <span>
           Max Possible:{' '}
-          <span className="text-zinc-400">{submission.score.maxPossible} pts</span>
+          <span className="text-muted">{submission.score.maxPossible} pts</span>
         </span>
       </div>
     </div>

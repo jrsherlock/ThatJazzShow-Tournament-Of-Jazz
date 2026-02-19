@@ -57,8 +57,8 @@ export default async function AdminDashboardPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-[#D4A843] mb-1">Dashboard</h1>
-      <p className="text-zinc-500 text-sm mb-8">
+      <h1 className="text-2xl font-bold text-accent mb-1">Dashboard</h1>
+      <p className="text-dim text-sm mb-8">
         Overview of your Tournament of Jazz bracket.
       </p>
 
@@ -66,22 +66,22 @@ export default async function AdminDashboardPage() {
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="rounded-lg border border-zinc-800 bg-[#1A1A1A] p-5"
+            className="rounded-lg border border-subtle bg-surface-hover p-5"
           >
-            <p className="text-xs uppercase tracking-wider text-zinc-500 mb-1">
+            <p className="text-xs uppercase tracking-wider text-dim mb-1">
               {stat.label}
             </p>
-            <p className="text-3xl font-bold text-zinc-100">{stat.value}</p>
+            <p className="text-3xl font-bold text-foreground">{stat.value}</p>
             {stat.detail && (
-              <p className="text-xs text-zinc-500 mt-2">{stat.detail}</p>
+              <p className="text-xs text-dim mt-2">{stat.detail}</p>
             )}
           </div>
         ))}
       </div>
 
       {tournaments.length === 0 && (
-        <div className="mt-10 rounded-lg border border-dashed border-zinc-700 p-8 text-center">
-          <p className="text-zinc-400">
+        <div className="mt-10 rounded-lg border border-dashed border-subtle p-8 text-center">
+          <p className="text-muted">
             No tournaments yet. Create one to get started.
           </p>
         </div>
@@ -92,17 +92,17 @@ export default async function AdminDashboardPage() {
           <h2 className="text-lg font-semibold text-zinc-200 mb-4">
             All Tournaments
           </h2>
-          <div className="rounded-lg border border-zinc-800 bg-[#1A1A1A] overflow-hidden">
+          <div className="rounded-lg border border-subtle bg-surface-hover overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-zinc-800">
-                  <th className="text-left px-4 py-3 text-zinc-500 font-medium">
+                <tr className="border-b border-subtle">
+                  <th className="text-left px-4 py-3 text-dim font-medium">
                     Name
                   </th>
-                  <th className="text-left px-4 py-3 text-zinc-500 font-medium">
+                  <th className="text-left px-4 py-3 text-dim font-medium">
                     Status
                   </th>
-                  <th className="text-left px-4 py-3 text-zinc-500 font-medium">
+                  <th className="text-left px-4 py-3 text-dim font-medium">
                     ID
                   </th>
                 </tr>
@@ -111,13 +111,13 @@ export default async function AdminDashboardPage() {
                 {tournaments.map((t) => (
                   <tr
                     key={t.id}
-                    className="border-b border-zinc-800/50 last:border-b-0"
+                    className="border-b border-subtle/50 last:border-b-0"
                   >
                     <td className="px-4 py-3 text-zinc-200">{t.name}</td>
                     <td className="px-4 py-3">
                       <StatusBadge status={t.status} />
                     </td>
-                    <td className="px-4 py-3 text-zinc-500 font-mono text-xs">
+                    <td className="px-4 py-3 text-dim font-mono text-xs">
                       {t.id.slice(0, 8)}...
                     </td>
                   </tr>
@@ -133,7 +133,7 @@ export default async function AdminDashboardPage() {
 
 function StatusBadge({ status }: { status: TournamentStatus }) {
   const colors: Record<TournamentStatus, string> = {
-    setup: 'bg-zinc-700 text-zinc-300',
+    setup: 'bg-zinc-700 text-foreground',
     open: 'bg-emerald-900/60 text-emerald-400',
     closed: 'bg-amber-900/60 text-amber-400',
     revealing: 'bg-purple-900/60 text-purple-400',
@@ -142,7 +142,7 @@ function StatusBadge({ status }: { status: TournamentStatus }) {
 
   return (
     <span
-      className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${colors[status] ?? 'bg-zinc-700 text-zinc-300'}`}
+      className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${colors[status] ?? 'bg-zinc-700 text-foreground'}`}
     >
       {formatStatus(status)}
     </span>

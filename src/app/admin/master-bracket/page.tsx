@@ -15,8 +15,8 @@ export default async function MasterBracketPage() {
   if (!tournament) {
     return (
       <div className="text-center py-20">
-        <h2 className="text-2xl font-bold text-[#D4A843]">No Tournament Found</h2>
-        <p className="text-gray-400 mt-2">Create a tournament from the dashboard first.</p>
+        <h2 className="text-2xl font-bold text-accent">No Tournament Found</h2>
+        <p className="text-muted mt-2">Create a tournament from the dashboard first.</p>
       </div>
     );
   }
@@ -35,8 +35,8 @@ export default async function MasterBracketPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-[#D4A843] mb-2">Master Bracket</h1>
-      <p className="text-gray-400 mb-8">
+      <h1 className="text-3xl font-bold text-accent mb-2">Master Bracket</h1>
+      <p className="text-muted mb-8">
         Set the correct answers for each matchup. This is the bracket participants will be scored against.
       </p>
       <MasterBracketEditor

@@ -72,9 +72,9 @@ export function MasterBracketEditor({ tournament, artists, existingBracket }: Pr
     return (
       <div
         key={key}
-        className="bg-[#1A1A1A] rounded-lg border border-[#D4A843]/20 p-3"
+        className="bg-surface-hover rounded-lg border border-accent/20 p-3"
       >
-        <div className="text-xs text-gray-500 mb-2">
+        <div className="text-xs text-dim mb-2">
           {ROUND_NAMES[round]} &middot; Game {idx + 1}
         </div>
         <div className="space-y-2">
@@ -83,13 +83,13 @@ export function MasterBracketEditor({ tournament, artists, existingBracket }: Pr
             disabled={!artistA}
             className={`w-full text-left px-3 py-2 rounded transition-colors ${
               currentPick === artistA?.id
-                ? 'bg-[#D4A843]/20 border border-[#D4A843] text-[#D4A843]'
+                ? 'bg-accent/20 border border-accent text-accent'
                 : artistA
-                ? 'bg-[#0A0A0A] border border-transparent hover:border-[#D4A843]/40 text-white'
-                : 'bg-[#0A0A0A] border border-transparent text-gray-600 cursor-not-allowed'
+                ? 'bg-background border border-transparent hover:border-accent/40 text-foreground'
+                : 'bg-background border border-transparent text-gray-600 cursor-not-allowed'
             }`}
           >
-            <span className="text-xs text-gray-500 mr-2">
+            <span className="text-xs text-dim mr-2">
               {artistA ? `#${artistA.seed}` : ''}
             </span>
             {artistA?.name ?? 'TBD'}
@@ -99,13 +99,13 @@ export function MasterBracketEditor({ tournament, artists, existingBracket }: Pr
             disabled={!artistB}
             className={`w-full text-left px-3 py-2 rounded transition-colors ${
               currentPick === artistB?.id
-                ? 'bg-[#D4A843]/20 border border-[#D4A843] text-[#D4A843]'
+                ? 'bg-accent/20 border border-accent text-accent'
                 : artistB
-                ? 'bg-[#0A0A0A] border border-transparent hover:border-[#D4A843]/40 text-white'
-                : 'bg-[#0A0A0A] border border-transparent text-gray-600 cursor-not-allowed'
+                ? 'bg-background border border-transparent hover:border-accent/40 text-foreground'
+                : 'bg-background border border-transparent text-gray-600 cursor-not-allowed'
             }`}
           >
-            <span className="text-xs text-gray-500 mr-2">
+            <span className="text-xs text-dim mr-2">
               {artistB ? `#${artistB.seed}` : ''}
             </span>
             {artistB?.name ?? 'TBD'}
@@ -129,15 +129,15 @@ export function MasterBracketEditor({ tournament, artists, existingBracket }: Pr
   return (
     <div>
       {/* Progress + Save */}
-      <div className="flex items-center justify-between mb-6 p-4 bg-[#1A1A1A] rounded-lg border border-[#D4A843]/20">
+      <div className="flex items-center justify-between mb-6 p-4 bg-surface-hover rounded-lg border border-accent/20">
         <div>
-          <span className="text-gray-400">Picks Made: </span>
-          <span className="text-[#D4A843] font-bold">{pickCount} / 63</span>
+          <span className="text-muted">Picks Made: </span>
+          <span className="text-accent font-bold">{pickCount} / 63</span>
         </div>
         <button
           onClick={saveBracket}
           disabled={saving}
-          className="px-6 py-2 bg-[#D4A843] text-[#0A0A0A] font-bold rounded-lg hover:bg-[#C49A3A] transition-colors disabled:opacity-50"
+          className="px-6 py-2 bg-accent text-white font-bold rounded-lg hover:bg-accent-light transition-colors disabled:opacity-50"
         >
           {saving ? 'Saving...' : 'Save Master Bracket'}
         </button>
@@ -157,8 +157,8 @@ export function MasterBracketEditor({ tournament, artists, existingBracket }: Pr
               onClick={() => setActiveRound(round)}
               className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
                 activeRound === round
-                  ? 'bg-[#D4A843] text-[#0A0A0A]'
-                  : 'bg-[#1A1A1A] text-gray-400 hover:text-white border border-[#D4A843]/20'
+                  ? 'bg-accent text-white'
+                  : 'bg-surface-hover text-muted hover:text-foreground border border-accent/20'
               }`}
             >
               {ROUND_NAMES[round]} ({roundPicks}/{roundTotal})
@@ -174,8 +174,8 @@ export function MasterBracketEditor({ tournament, artists, existingBracket }: Pr
             onClick={() => setActiveRegion('all')}
             className={`px-3 py-1 rounded text-xs transition-colors ${
               activeRegion === 'all'
-                ? 'bg-[#D4A843]/20 text-[#D4A843]'
-                : 'bg-[#0A0A0A] text-gray-500 hover:text-gray-300'
+                ? 'bg-accent/20 text-accent'
+                : 'bg-background text-dim hover:text-muted'
             }`}
           >
             All Regions
@@ -186,8 +186,8 @@ export function MasterBracketEditor({ tournament, artists, existingBracket }: Pr
               onClick={() => setActiveRegion(region)}
               className={`px-3 py-1 rounded text-xs transition-colors ${
                 activeRegion === region
-                  ? 'bg-[#D4A843]/20 text-[#D4A843]'
-                  : 'bg-[#0A0A0A] text-gray-500 hover:text-gray-300'
+                  ? 'bg-accent/20 text-accent'
+                  : 'bg-background text-dim hover:text-muted'
               }`}
             >
               {REGION_LABELS[region]}
@@ -202,7 +202,7 @@ export function MasterBracketEditor({ tournament, artists, existingBracket }: Pr
       </div>
 
       {matchupIndices.length === 0 && (
-        <p className="text-center text-gray-500 py-10">
+        <p className="text-center text-dim py-10">
           No matchups to show for this filter. Try selecting &quot;All Regions&quot;.
         </p>
       )}

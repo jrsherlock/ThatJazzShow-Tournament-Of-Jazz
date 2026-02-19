@@ -5,6 +5,7 @@ import type { Artist, Region, Pick } from '@/lib/types';
 import {
   REGIONS,
   REGION_LABELS,
+  REGION_COLORS,
   ROUND_NAMES,
 } from '@/lib/constants';
 import {
@@ -19,6 +20,7 @@ interface MobileRoundFlowProps {
   picks: Record<string, Pick>;
   onPickWinner: (matchupKey: string, winnerId: string) => void;
   onOpenPreview: (matchupKey: string) => void;
+  onOpenArtistBio?: (artist: Artist, matchupKey: string) => void;
   className?: string;
 }
 
@@ -130,14 +132,17 @@ function RegionTabContent({
   picks,
   onPickWinner,
   onOpenPreview,
+  onOpenArtistBio,
 }: {
   region: Region;
   artists: Artist[];
   picks: Record<string, Pick>;
   onPickWinner: (matchupKey: string, winnerId: string) => void;
   onOpenPreview: (matchupKey: string) => void;
+  onOpenArtistBio?: (artist: Artist, matchupKey: string) => void;
 }) {
   const roundsData = useRegionMatchupData(region, artists, picks);
+  const colors = REGION_COLORS[region];
 
   return (
     <div className="space-y-6">
@@ -149,17 +154,17 @@ function RegionTabContent({
               className="h-[1px] flex-1"
               style={{
                 background:
-                  'linear-gradient(to right, rgba(212, 168, 67, 0.3), transparent)',
+                  `linear-gradient(to right, ${colors.primary}4D, transparent)`,
               }}
             />
-            <h3 className="text-xs uppercase tracking-widest text-[#D4A843] font-semibold whitespace-nowrap">
+            <h3 className="text-xs uppercase tracking-widest text-accent font-semibold whitespace-nowrap">
               {name}
             </h3>
             <div
               className="h-[1px] flex-1"
               style={{
                 background:
-                  'linear-gradient(to left, rgba(212, 168, 67, 0.3), transparent)',
+                  `linear-gradient(to left, ${colors.primary}4D, transparent)`,
               }}
             />
           </div>
@@ -176,6 +181,7 @@ function RegionTabContent({
                 commentary={picks[m.key]?.commentary}
                 onPickWinner={onPickWinner}
                 onOpenPreview={onOpenPreview}
+                onOpenArtistBio={onOpenArtistBio}
                 round={round}
                 className="w-full"
               />
@@ -195,11 +201,13 @@ function FinalFourTabContent({
   picks,
   onPickWinner,
   onOpenPreview,
+  onOpenArtistBio,
 }: {
   artists: Artist[];
   picks: Record<string, Pick>;
   onPickWinner: (matchupKey: string, winnerId: string) => void;
   onOpenPreview: (matchupKey: string) => void;
+  onOpenArtistBio?: (artist: Artist, matchupKey: string) => void;
 }) {
   const roundsData = useFinalFourData(artists, picks);
 
@@ -213,17 +221,17 @@ function FinalFourTabContent({
               className="h-[1px] flex-1"
               style={{
                 background:
-                  'linear-gradient(to right, rgba(212, 168, 67, 0.3), transparent)',
+                  'linear-gradient(to right, color-mix(in srgb, var(--accent) 30%, transparent), transparent)',
               }}
             />
-            <h3 className="text-xs uppercase tracking-widest text-[#D4A843] font-semibold whitespace-nowrap">
+            <h3 className="text-xs uppercase tracking-widest text-accent font-semibold whitespace-nowrap">
               {name}
             </h3>
             <div
               className="h-[1px] flex-1"
               style={{
                 background:
-                  'linear-gradient(to left, rgba(212, 168, 67, 0.3), transparent)',
+                  'linear-gradient(to left, color-mix(in srgb, var(--accent) 30%, transparent), transparent)',
               }}
             />
           </div>
@@ -240,6 +248,7 @@ function FinalFourTabContent({
                 commentary={picks[m.key]?.commentary}
                 onPickWinner={onPickWinner}
                 onOpenPreview={onOpenPreview}
+                onOpenArtistBio={onOpenArtistBio}
                 round={round}
                 className="w-full"
               />
@@ -256,6 +265,7 @@ export function MobileRoundFlow({
   picks,
   onPickWinner,
   onOpenPreview,
+  onOpenArtistBio,
   className = '',
 }: MobileRoundFlowProps) {
   const [activeTab, setActiveTab] = useState<TabId>('vocalists');
@@ -265,11 +275,12 @@ export function MobileRoundFlow({
       {/* Tab bar */}
       <div
         className="sticky top-0 z-10 overflow-x-auto scrollbar-hide"
-        style={{ backgroundColor: '#0A0A0A' }}
+        style={{ backgroundColor: 'var(--background)' }}
       >
-        <div className="flex min-w-max border-b border-zinc-800">
+        <div className="flex min-w-max border-b border-subtle">
           {TABS.map((tab) => {
             const isActive = activeTab === tab.id;
+            const regionColor = tab.id !== 'finalfour' ? REGION_COLORS[tab.id as Region]?.primary : undefined;
             return (
               <button
                 key={tab.id}
@@ -279,19 +290,20 @@ export function MobileRoundFlow({
                   transition-colors duration-200 relative
                   ${
                     isActive
-                      ? 'text-[#D4A843]'
-                      : 'text-zinc-500 hover:text-zinc-300'
+                      ? ''
+                      : 'text-dim hover:text-foreground'
                   }
                 `}
+                style={{ color: isActive ? (regionColor ?? 'var(--color-accent)') : undefined }}
                 aria-selected={isActive}
                 role="tab"
               >
                 {tab.label}
-                {/* Gold underline for active tab */}
+                {/* Region-colored underline for active tab */}
                 {isActive && (
                   <span
                     className="absolute bottom-0 left-0 right-0 h-[2px]"
-                    style={{ backgroundColor: '#D4A843' }}
+                    style={{ backgroundColor: regionColor ?? 'var(--color-accent)' }}
                   />
                 )}
               </button>
@@ -308,6 +320,7 @@ export function MobileRoundFlow({
             picks={picks}
             onPickWinner={onPickWinner}
             onOpenPreview={onOpenPreview}
+            onOpenArtistBio={onOpenArtistBio}
           />
         ) : (
           <RegionTabContent
@@ -316,6 +329,7 @@ export function MobileRoundFlow({
             picks={picks}
             onPickWinner={onPickWinner}
             onOpenPreview={onOpenPreview}
+            onOpenArtistBio={onOpenArtistBio}
           />
         )}
       </div>

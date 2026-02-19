@@ -5,6 +5,7 @@ import type { Artist, Region, Pick } from '@/lib/types';
 import {
   REGION_LABELS,
   REGION_SUBTITLES,
+  REGION_COLORS,
   ROUND_NAMES,
   REGIONS,
 } from '@/lib/constants';
@@ -22,6 +23,7 @@ interface RegionBracketProps {
   picks: Record<string, Pick>;
   onPickWinner: (matchupKey: string, winnerId: string) => void;
   onOpenPreview: (matchupKey: string) => void;
+  onOpenArtistBio?: (artist: Artist, matchupKey: string) => void;
   className?: string;
 }
 
@@ -74,8 +76,10 @@ export function RegionBracket({
   picks,
   onPickWinner,
   onOpenPreview,
+  onOpenArtistBio,
   className = '',
 }: RegionBracketProps) {
+  const colors = REGION_COLORS[region];
   const { round1, round2, round3, round4 } = useRegionMatchups(
     regionIndex,
     artists,
@@ -90,18 +94,18 @@ export function RegionBracket({
   ];
 
   return (
-    <div className={`region-bracket ${className}`}>
+    <div className={`region-bracket ${className}`} style={{ '--region-color': colors.primary } as React.CSSProperties}>
       {/* Region Header */}
       <div className="mb-6 text-center">
         <h2
-          className="text-2xl md:text-3xl font-bold text-[#D4A843]"
-          style={{ fontFamily: 'Playfair Display, serif' }}
+          className="text-2xl md:text-3xl font-bold font-display"
+          style={{ color: colors.primary }}
         >
           {REGION_LABELS[region]}
         </h2>
         <p
-          className="text-sm md:text-base text-zinc-400 mt-1 italic"
-          style={{ fontFamily: 'Playfair Display, serif' }}
+          className="text-sm md:text-base mt-1 italic font-display"
+          style={{ color: colors.light }}
         >
           {REGION_SUBTITLES[region]}
         </p>
@@ -122,7 +126,7 @@ export function RegionBracket({
           >
             {/* Round label */}
             <div className="text-center mb-3">
-              <span className="text-xs uppercase tracking-wider text-zinc-500 font-medium">
+              <span className="text-xs uppercase tracking-wider text-dim font-medium">
                 {name}
               </span>
             </div>
@@ -144,6 +148,7 @@ export function RegionBracket({
                       commentary={picks[m.key]?.commentary}
                       onPickWinner={onPickWinner}
                       onOpenPreview={onOpenPreview}
+                      onOpenArtistBio={onOpenArtistBio}
                       round={round}
                       className="w-full"
                     />
@@ -160,7 +165,7 @@ export function RegionBracket({
                         top: '50%',
                         width: '16px',
                         height: '1px',
-                        backgroundColor: '#D4A843',
+                        backgroundColor: colors.primary,
                         opacity: 0.4,
                       }}
                     />
@@ -178,7 +183,7 @@ export function RegionBracket({
                         bottom: matchupIdx % 2 === 1 ? '50%' : undefined,
                         width: '1px',
                         height: '50%',
-                        backgroundColor: '#D4A843',
+                        backgroundColor: colors.primary,
                         opacity: 0.4,
                         // For even matchups draw down, for odd draw up
                         ...(matchupIdx % 2 === 0
@@ -219,8 +224,8 @@ export function RegionBracket({
           background: linear-gradient(
             to bottom,
             transparent 0%,
-            rgba(212, 168, 67, 0.15) 10%,
-            rgba(212, 168, 67, 0.15) 90%,
+            color-mix(in srgb, var(--region-color) 15%, transparent) 10%,
+            color-mix(in srgb, var(--region-color) 15%, transparent) 90%,
             transparent 100%
           );
         }

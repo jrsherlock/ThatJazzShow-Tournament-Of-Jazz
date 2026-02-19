@@ -1,5 +1,12 @@
 export type Region = 'vocalists' | 'bandleaders' | 'composers' | 'soloists';
 
+export interface MediaLink {
+  type: 'video' | 'audio';
+  url: string;
+  title: string;
+  source: string;
+}
+
 export interface Artist {
   id: string;
   name: string;
@@ -11,6 +18,7 @@ export interface Artist {
   era: string | null;
   featured_track_url: string | null;
   featured_track_title: string | null;
+  media: MediaLink[] | null;
   created_at: string;
 }
 

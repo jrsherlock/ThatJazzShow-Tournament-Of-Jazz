@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import type { Artist, MatchupPreview } from '@/lib/types';
 import { ArtistCard } from './ArtistCard';
@@ -31,29 +30,6 @@ export function MatchupPreviewModal({
   onPickWinner,
   onCommentaryChange,
 }: MatchupPreviewModalProps) {
-  // Escape key handler
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    },
-    [onClose]
-  );
-
-  // Lock body scroll and listen for Escape
-  useEffect(() => {
-    if (!isOpen) return;
-
-    document.body.classList.add('overflow-hidden');
-    document.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.body.classList.remove('overflow-hidden');
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen, handleKeyDown]);
-
   if (!isOpen) return null;
 
   const hasBothArtists = artistA !== null && artistB !== null;
@@ -74,7 +50,7 @@ export function MatchupPreviewModal({
         className="
           w-full md:max-w-[700px]
           max-h-[90vh] overflow-y-auto
-          bg-[#1A1A1A] border border-gold/20
+          bg-surface-hover border border-accent/20
           md:rounded-xl
           rounded-t-2xl md:rounded-b-xl
           shadow-2xl
@@ -90,7 +66,7 @@ export function MatchupPreviewModal({
             absolute top-4 right-4 z-10
             w-8 h-8 rounded-full
             flex items-center justify-center
-            text-gray-400 hover:text-white hover:bg-white/10
+            text-muted hover:text-foreground hover:bg-foreground/10
             transition-colors
           "
           aria-label="Close modal"
@@ -107,7 +83,7 @@ export function MatchupPreviewModal({
 
         <div className="p-6 md:p-8 space-y-6">
           {/* Headline */}
-          <h2 className="font-display text-2xl md:text-3xl font-bold text-white pr-10 leading-tight">
+          <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground pr-10 leading-tight">
             {headline}
           </h2>
 
@@ -122,10 +98,10 @@ export function MatchupPreviewModal({
               {/* Host preview text */}
               {preview?.preview_text && (
                 <div className="space-y-2">
-                  <h3 className="text-sm font-semibold text-gold/80 uppercase tracking-wider">
+                  <h3 className="text-sm font-semibold text-accent/80 uppercase tracking-wider">
                     Host Preview
                   </h3>
-                  <div className="text-sm text-gray-300 leading-relaxed whitespace-pre-line">
+                  <div className="text-sm text-muted leading-relaxed whitespace-pre-line">
                     {preview.preview_text}
                   </div>
                 </div>
@@ -133,14 +109,14 @@ export function MatchupPreviewModal({
 
               {/* Fun fact callout */}
               {preview?.fun_fact && (
-                <div className="rounded-lg border border-gold/30 bg-gold/[0.05] p-4">
+                <div className="rounded-lg border border-accent/30 bg-accent/[0.05] p-4">
                   <div className="flex items-start gap-3">
-                    <span className="text-gold text-lg mt-0.5">&#9834;</span>
+                    <span className="text-accent text-lg mt-0.5">&#9834;</span>
                     <div>
-                      <h4 className="text-xs font-bold text-gold uppercase tracking-wider mb-1">
+                      <h4 className="text-xs font-bold text-accent uppercase tracking-wider mb-1">
                         Fun Fact
                       </h4>
-                      <p className="text-sm text-gray-300 leading-relaxed">
+                      <p className="text-sm text-muted leading-relaxed">
                         {preview.fun_fact}
                       </p>
                     </div>
@@ -156,8 +132,8 @@ export function MatchupPreviewModal({
                     px-4 py-3 rounded-lg font-semibold text-sm transition-all duration-200
                     ${
                       winnerId === artistA.id
-                        ? 'bg-gold text-[#0A0A0A]'
-                        : 'border border-gold/40 text-gold hover:bg-gold/10'
+                        ? 'bg-accent text-white'
+                        : 'border border-accent/40 text-accent hover:bg-accent/10'
                     }
                   `}
                 >
@@ -169,8 +145,8 @@ export function MatchupPreviewModal({
                     px-4 py-3 rounded-lg font-semibold text-sm transition-all duration-200
                     ${
                       winnerId === artistB.id
-                        ? 'bg-gold text-[#0A0A0A]'
-                        : 'border border-gold/40 text-gold hover:bg-gold/10'
+                        ? 'bg-accent text-white'
+                        : 'border border-accent/40 text-accent hover:bg-accent/10'
                     }
                   `}
                 >
@@ -187,7 +163,7 @@ export function MatchupPreviewModal({
             </>
           ) : (
             /* TBD state */
-            <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+            <div className="flex flex-col items-center justify-center py-12 text-dim">
               <svg
                 className="w-12 h-12 mb-4 text-gray-600"
                 fill="none"

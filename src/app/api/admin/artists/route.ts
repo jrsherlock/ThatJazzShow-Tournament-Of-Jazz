@@ -38,6 +38,7 @@ export async function POST(request: NextRequest) {
     era,
     featured_track_url,
     featured_track_title,
+    media,
   } = body;
 
   if (!name || !seed || !region) {
@@ -59,6 +60,7 @@ export async function POST(request: NextRequest) {
       era: era || null,
       featured_track_url: featured_track_url || null,
       featured_track_title: featured_track_title || null,
+      media: media && media.length > 0 ? media : null,
     })
     .select()
     .single();
@@ -87,6 +89,7 @@ export async function PUT(request: NextRequest) {
     era,
     featured_track_url,
     featured_track_title,
+    media,
   } = body;
 
   if (!id) {
@@ -105,6 +108,7 @@ export async function PUT(request: NextRequest) {
       era: era || null,
       featured_track_url: featured_track_url || null,
       featured_track_title: featured_track_title || null,
+      media: media && media.length > 0 ? media : null,
     })
     .eq('id', id)
     .select()

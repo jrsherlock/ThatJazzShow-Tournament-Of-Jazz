@@ -19,8 +19,8 @@ export default async function AdminSubmissionsPage() {
   if (tournamentError || !tournament) {
     return (
       <div className="text-center py-20">
-        <h2 className="text-xl font-semibold text-zinc-300 mb-2">No Tournament Found</h2>
-        <p className="text-zinc-500">Create a tournament first from the Dashboard.</p>
+        <h2 className="text-xl font-semibold text-foreground mb-2">No Tournament Found</h2>
+        <p className="text-dim">Create a tournament first from the Dashboard.</p>
       </div>
     );
   }
@@ -35,8 +35,8 @@ export default async function AdminSubmissionsPage() {
   if (bracketError || !masterBracket) {
     return (
       <div className="text-center py-20">
-        <h2 className="text-xl font-semibold text-zinc-300 mb-2">No Master Bracket Found</h2>
-        <p className="text-zinc-500">
+        <h2 className="text-xl font-semibold text-foreground mb-2">No Master Bracket Found</h2>
+        <p className="text-dim">
           Set up the master bracket before viewing submissions.
         </p>
       </div>

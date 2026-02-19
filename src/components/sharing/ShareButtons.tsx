@@ -58,15 +58,15 @@ export function ShareButtons({ bracketUrl, displayName, className = '' }: ShareB
   }, [bracketUrl, displayName]);
 
   return (
-    <div className={`rounded-xl bg-[#1A1A1A] border border-[#D4A843]/20 p-5 ${className}`}>
-      <p className="text-xs uppercase tracking-widest text-zinc-500 mb-4 text-center">
+    <div className={`rounded-xl bg-surface-hover border border-accent/20 p-5 ${className}`}>
+      <p className="text-xs uppercase tracking-widest text-dim mb-4 text-center">
         Share Your Bracket
       </p>
       <div className="flex items-center justify-center gap-3 flex-wrap">
         {/* Facebook */}
         <button
           onClick={handleFacebookShare}
-          className="group flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[#D4A843]/40 text-[#D4A843] hover:bg-[#D4A843] hover:text-[#0A0A0A] transition-colors duration-200 text-sm font-medium"
+          className="group flex items-center gap-2 px-4 py-2.5 rounded-lg border border-accent/40 text-accent hover:bg-accent hover:text-white transition-colors duration-200 text-sm font-medium"
           aria-label="Share on Facebook"
         >
           <svg
@@ -83,7 +83,7 @@ export function ShareButtons({ bracketUrl, displayName, className = '' }: ShareB
         {/* LinkedIn */}
         <button
           onClick={handleLinkedInShare}
-          className="group flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[#D4A843]/40 text-[#D4A843] hover:bg-[#D4A843] hover:text-[#0A0A0A] transition-colors duration-200 text-sm font-medium"
+          className="group flex items-center gap-2 px-4 py-2.5 rounded-lg border border-accent/40 text-accent hover:bg-accent hover:text-white transition-colors duration-200 text-sm font-medium"
           aria-label="Share on LinkedIn"
         >
           <svg
@@ -100,7 +100,7 @@ export function ShareButtons({ bracketUrl, displayName, className = '' }: ShareB
         {/* Download for Instagram */}
         <button
           onClick={handleDownloadImage}
-          className="group flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[#D4A843]/40 text-[#D4A843] hover:bg-[#D4A843] hover:text-[#0A0A0A] transition-colors duration-200 text-sm font-medium"
+          className="group flex items-center gap-2 px-4 py-2.5 rounded-lg border border-accent/40 text-accent hover:bg-accent hover:text-white transition-colors duration-200 text-sm font-medium"
           aria-label="Download image for Instagram"
         >
           <svg

@@ -33,7 +33,7 @@ export default async function OGImage({
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: '#0A0A0A',
-            color: '#D4A843',
+            color: '#0B3D91',
             fontSize: 48,
             fontFamily: 'serif',
           }}
@@ -116,7 +116,7 @@ export default async function OGImage({
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            border: '2px solid #D4A843',
+            border: '2px solid #0B3D91',
             borderRadius: '12px',
             padding: '40px 50px',
             position: 'relative',
@@ -135,7 +135,7 @@ export default async function OGImage({
               style={{
                 fontSize: 36,
                 fontWeight: 700,
-                color: '#D4A843',
+                color: '#0B3D91',
                 fontFamily: 'serif',
                 letterSpacing: '1px',
               }}
@@ -160,7 +160,7 @@ export default async function OGImage({
             style={{
               width: '100%',
               height: '1px',
-              background: 'linear-gradient(90deg, transparent, #D4A843, transparent)',
+              background: 'linear-gradient(90deg, transparent, #0B3D91, transparent)',
               marginBottom: '20px',
             }}
           />
@@ -197,12 +197,12 @@ export default async function OGImage({
               <div
                 style={{
                   fontSize: 20,
-                  color: '#D4A843',
+                  color: '#0B3D91',
                   fontWeight: 600,
-                  backgroundColor: 'rgba(212, 168, 67, 0.1)',
+                  backgroundColor: 'rgba(11, 61, 145, 0.1)',
                   padding: '6px 24px',
                   borderRadius: '8px',
-                  border: '1px solid rgba(212, 168, 67, 0.3)',
+                  border: '1px solid rgba(11, 61, 145, 0.3)',
                 }}
               >
                 {scoreText}
@@ -288,7 +288,7 @@ export default async function OGImage({
                     alignItems: 'center',
                     justifyContent: 'center',
                     backgroundColor: '#1A1A1A',
-                    border: '1px solid rgba(212, 168, 67, 0.3)',
+                    border: '1px solid rgba(11, 61, 145, 0.3)',
                     borderRadius: '8px',
                     padding: '10px 20px',
                     minWidth: '200px',
@@ -316,7 +316,7 @@ export default async function OGImage({
                       alignItems: 'center',
                       justifyContent: 'center',
                       backgroundColor: '#1A1A1A',
-                      border: '1px solid rgba(212, 168, 67, 0.15)',
+                      border: '1px solid rgba(11, 61, 145, 0.15)',
                       borderRadius: '8px',
                       padding: '10px 20px',
                       minWidth: '200px',
@@ -347,7 +347,7 @@ export default async function OGImage({
               right: '50px',
               height: '1px',
               background:
-                'linear-gradient(90deg, transparent, #D4A843, transparent)',
+                'linear-gradient(90deg, transparent, #0B3D91, transparent)',
             }}
           />
         </div>

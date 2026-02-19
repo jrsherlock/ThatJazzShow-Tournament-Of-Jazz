@@ -15,8 +15,8 @@ export default async function MatchupPreviewsPage() {
   if (!tournament) {
     return (
       <div className="text-center py-20">
-        <h2 className="text-2xl font-bold text-[#D4A843]">No Tournament Found</h2>
-        <p className="text-gray-400 mt-2">Create a tournament from the dashboard first.</p>
+        <h2 className="text-2xl font-bold text-accent">No Tournament Found</h2>
+        <p className="text-muted mt-2">Create a tournament from the dashboard first.</p>
       </div>
     );
   }
@@ -34,8 +34,8 @@ export default async function MatchupPreviewsPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-[#D4A843] mb-2">Matchup Previews</h1>
-      <p className="text-gray-400 mb-8">
+      <h1 className="text-3xl font-bold text-accent mb-2">Matchup Previews</h1>
+      <p className="text-muted mb-8">
         Write Game Preview content for each Round 1 matchup. Participants will see this when they click a matchup.
       </p>
       <MatchupPreviewEditor

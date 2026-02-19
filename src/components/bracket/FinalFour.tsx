@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import type { Artist, Pick } from '@/lib/types';
-import { ROUND_NAMES } from '@/lib/constants';
+import { ROUND_NAMES, REGION_COLORS } from '@/lib/constants';
 import { matchupKey, getMatchupArtists } from '@/lib/bracket-utils';
 import { Matchup } from '@/components/bracket/Matchup';
 
@@ -11,6 +11,7 @@ interface FinalFourProps {
   picks: Record<string, Pick>;
   onPickWinner: (matchupKey: string, winnerId: string) => void;
   onOpenPreview: (matchupKey: string) => void;
+  onOpenArtistBio?: (artist: Artist, matchupKey: string) => void;
   className?: string;
 }
 
@@ -45,6 +46,7 @@ export function FinalFour({
   picks,
   onPickWinner,
   onOpenPreview,
+  onOpenArtistBio,
   className = '',
 }: FinalFourProps) {
   const matchups = useMemo(() => {
@@ -64,8 +66,30 @@ export function FinalFour({
 
     return {
       finalFour: [
-        { key: ff0Key, artistA: ff0A, artistB: ff0B, label: 'Vocalists vs Band Leaders' },
-        { key: ff1Key, artistA: ff1A, artistB: ff1B, label: 'Composers vs Soloists' },
+        {
+          key: ff0Key,
+          artistA: ff0A,
+          artistB: ff0B,
+          label: (
+            <>
+              <span style={{ color: REGION_COLORS.vocalists.primary }}>Vocalists</span>
+              {' vs '}
+              <span style={{ color: REGION_COLORS.bandleaders.primary }}>Band Leaders</span>
+            </>
+          ) as React.ReactNode,
+        },
+        {
+          key: ff1Key,
+          artistA: ff1A,
+          artistB: ff1B,
+          label: (
+            <>
+              <span style={{ color: REGION_COLORS.composers.primary }}>Composers</span>
+              {' vs '}
+              <span style={{ color: REGION_COLORS.soloists.primary }}>Soloists</span>
+            </>
+          ) as React.ReactNode,
+        },
       ],
       championship: { key: champKey, artistA: champA, artistB: champB },
     };
@@ -82,7 +106,7 @@ export function FinalFour({
       {/* Header */}
       <div className="text-center mb-8">
         <h2
-          className="text-3xl md:text-4xl font-bold text-[#D4A843]"
+          className="text-3xl md:text-4xl font-bold text-champion"
           style={{ fontFamily: 'Playfair Display, serif' }}
         >
           The Final Four
@@ -99,7 +123,7 @@ export function FinalFour({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 mb-8">
         {matchups.finalFour.map((m) => (
           <div key={m.key} className="flex flex-col items-center">
-            <span className="text-xs uppercase tracking-wider text-zinc-500 font-medium mb-2">
+            <span className="text-xs uppercase tracking-wider text-dim font-medium mb-2">
               {ROUND_NAMES[5]}
             </span>
             <p className="text-xs text-zinc-600 mb-3 italic">{m.label}</p>
@@ -111,13 +135,14 @@ export function FinalFour({
               commentary={picks[m.key]?.commentary}
               onPickWinner={onPickWinner}
               onOpenPreview={onOpenPreview}
+              onOpenArtistBio={onOpenArtistBio}
               round={5}
               className="w-full max-w-sm"
             />
             {/* Connector line down to championship */}
             <div
               className="hidden md:block w-[1px] h-8 mx-auto mt-2"
-              style={{ backgroundColor: 'rgba(212, 168, 67, 0.4)' }}
+              style={{ backgroundColor: 'color-mix(in srgb, var(--accent) 40%, transparent)' }}
               aria-hidden="true"
             />
           </div>
@@ -126,17 +151,17 @@ export function FinalFour({
 
       {/* Championship matchup */}
       <div className="flex flex-col items-center">
-        <span className="text-xs uppercase tracking-wider text-zinc-500 font-medium mb-2">
+        <span className="text-xs uppercase tracking-wider text-dim font-medium mb-2">
           {ROUND_NAMES[6]}
         </span>
 
         <div
           className="relative w-full max-w-md p-1 rounded-xl"
           style={{
-            background: 'linear-gradient(135deg, rgba(212, 168, 67, 0.3), rgba(107, 29, 42, 0.3))',
+            background: 'linear-gradient(135deg, color-mix(in srgb, var(--accent) 30%, transparent), color-mix(in srgb, #9A3D50 30%, transparent))',
           }}
         >
-          <div className="rounded-lg bg-[#0A0A0A]">
+          <div className="rounded-lg bg-background">
             <Matchup
               matchupKey={matchups.championship.key}
               artistA={matchups.championship.artistA}
@@ -145,6 +170,7 @@ export function FinalFour({
               commentary={picks[matchups.championship.key]?.commentary}
               onPickWinner={onPickWinner}
               onOpenPreview={onOpenPreview}
+              onOpenArtistBio={onOpenArtistBio}
               round={6}
               className="w-full"
             />
@@ -157,8 +183,7 @@ export function FinalFour({
         <div className="flex items-center gap-2 mb-3">
           <TrophyIcon className="w-6 h-6" />
           <span
-            className="text-sm uppercase tracking-widest text-[#D4A843] font-semibold"
-            style={{ fontFamily: 'Playfair Display, serif' }}
+            className="text-sm uppercase tracking-widest text-champion font-semibold"
           >
             Champion
           </span>
@@ -168,22 +193,21 @@ export function FinalFour({
         <div
           className="w-full max-w-xs rounded-lg border p-4 text-center min-h-[60px] flex items-center justify-center"
           style={{
-            borderColor: champion ? '#D4A843' : 'rgba(212, 168, 67, 0.2)',
+            borderColor: champion ? '#D4A843' : 'color-mix(in srgb, var(--accent) 20%, transparent)',
             backgroundColor: champion
-              ? 'rgba(212, 168, 67, 0.08)'
+              ? 'color-mix(in srgb, var(--accent) 8%, transparent)'
               : 'rgba(26, 26, 26, 0.5)',
           }}
         >
           {champion ? (
             <div>
               <p
-                className="text-lg font-bold text-[#D4A843]"
-                style={{ fontFamily: 'Playfair Display, serif' }}
-              >
+                className="text-lg font-bold text-champion"
+                  >
                 {champion.name}
               </p>
               {champion.instrument && (
-                <p className="text-xs text-zinc-400 mt-1">{champion.instrument}</p>
+                <p className="text-xs text-muted mt-1">{champion.instrument}</p>
               )}
             </div>
           ) : (
