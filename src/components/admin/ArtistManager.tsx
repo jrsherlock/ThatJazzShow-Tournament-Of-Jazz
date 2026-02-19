@@ -160,6 +160,58 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const [uploadingPhotoFor, setUploadingPhotoFor] = useState<string | null>(null);
+
+  const handlePhotoUpload = async (artistId: string, file: File) => {
+    setUploadingPhotoFor(artistId);
+    setError(null);
+
+    try {
+      const form = new FormData();
+      form.append('file', file);
+      form.append('artistId', artistId);
+
+      const res = await fetch('/api/admin/artists/photo', {
+        method: 'POST',
+        body: form,
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Upload failed');
+      }
+
+      await fetchArtists();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Photo upload failed');
+    } finally {
+      setUploadingPhotoFor(null);
+    }
+  };
+
+  const handlePhotoRemove = async (artistId: string) => {
+    if (!confirm('Remove this artist\'s photo?')) return;
+    setUploadingPhotoFor(artistId);
+    setError(null);
+
+    try {
+      const res = await fetch(`/api/admin/artists/photo?artistId=${artistId}`, {
+        method: 'DELETE',
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to remove photo');
+      }
+
+      await fetchArtists();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to remove photo');
+    } finally {
+      setUploadingPhotoFor(null);
+    }
+  };
+
   const isFormOpen = editingArtist !== null || addingToRegion !== null;
 
   return (
@@ -500,6 +552,7 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
                         <thead>
                           <tr className="text-left text-xs uppercase tracking-wider text-dim border-b border-accent/10">
                             <th className="px-6 py-3 w-16">Seed</th>
+                            <th className="px-6 py-3 w-20">Photo</th>
                             <th className="px-6 py-3">Name</th>
                             <th className="px-6 py-3 hidden md:table-cell">Instrument</th>
                             <th className="px-6 py-3 hidden md:table-cell">Era</th>
@@ -517,6 +570,59 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
                                 <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-accent/10 text-accent text-sm font-bold">
                                   {artist.seed}
                                 </span>
+                              </td>
+                              <td className="px-6 py-3">
+                                <div className="flex items-center gap-2">
+                                  {artist.photo_url ? (
+                                    <div className="relative group/photo">
+                                      <label className="cursor-pointer" title="Click to replace photo">
+                                        <img
+                                          src={artist.photo_url}
+                                          alt={artist.name}
+                                          className="w-10 h-10 rounded-full object-cover border border-accent/20 hover:opacity-70 transition-opacity"
+                                        />
+                                        <input
+                                          type="file"
+                                          accept="image/jpeg,image/png,image/webp"
+                                          className="hidden"
+                                          onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            if (file) handlePhotoUpload(artist.id, file);
+                                            e.target.value = '';
+                                          }}
+                                        />
+                                      </label>
+                                      <button
+                                        onClick={() => handlePhotoRemove(artist.id)}
+                                        disabled={uploadingPhotoFor === artist.id}
+                                        className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[10px] leading-none flex items-center justify-center opacity-0 group-hover/photo:opacity-100 transition-opacity"
+                                        title="Remove photo"
+                                      >
+                                        x
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <label className="w-10 h-10 rounded-full bg-surface-hover border border-dashed border-accent/30 flex items-center justify-center cursor-pointer hover:border-accent/60 transition-colors">
+                                      {uploadingPhotoFor === artist.id ? (
+                                        <span className="text-[10px] text-dim">...</span>
+                                      ) : (
+                                        <svg className="w-4 h-4 text-dim" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                        </svg>
+                                      )}
+                                      <input
+                                        type="file"
+                                        accept="image/jpeg,image/png,image/webp"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                          const file = e.target.files?.[0];
+                                          if (file) handlePhotoUpload(artist.id, file);
+                                          e.target.value = '';
+                                        }}
+                                      />
+                                    </label>
+                                  )}
+                                </div>
                               </td>
                               <td className="px-6 py-3 font-medium">{artist.name}</td>
                               <td className="px-6 py-3 text-muted hidden md:table-cell">

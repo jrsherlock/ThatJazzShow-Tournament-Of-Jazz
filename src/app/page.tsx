@@ -109,6 +109,91 @@ function CompeteIcon() {
 }
 
 /* ------------------------------------------------------------------ */
+/*  "As Heard On" retro radio badge (à la "As Seen on TV")             */
+/* ------------------------------------------------------------------ */
+function AsHeardOnBadge() {
+  return (
+    <svg
+      width="120"
+      height="130"
+      viewBox="0 0 120 130"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="As heard on KRUI 89.7 FM"
+      className="w-[90px] h-[98px] sm:w-[120px] sm:h-[130px] drop-shadow-lg"
+      style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.5))' }}
+    >
+      {/* Antenna */}
+      <line x1="60" y1="28" x2="44" y2="6" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+      <line x1="60" y1="28" x2="76" y2="6" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+      {/* Antenna tips */}
+      <circle cx="44" cy="6" r="3" fill="white" />
+      <circle cx="76" cy="6" r="3" fill="white" />
+
+      {/* Radio waves from left antenna */}
+      <path d="M36 10a12 12 0 0 1-4-8" stroke="white" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.6" />
+      <path d="M32 12a18 18 0 0 1-6-12" stroke="white" strokeWidth="1.2" strokeLinecap="round" fill="none" opacity="0.35" />
+
+      {/* Radio waves from right antenna */}
+      <path d="M84 10a12 12 0 0 0 4-8" stroke="white" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.6" />
+      <path d="M88 12a18 18 0 0 0 6-12" stroke="white" strokeWidth="1.2" strokeLinecap="round" fill="none" opacity="0.35" />
+
+      {/* Outer border — rounded TV/radio shape */}
+      <rect x="8" y="24" width="104" height="84" rx="12" fill="white" />
+
+      {/* Inner red screen */}
+      <rect x="14" y="30" width="92" height="72" rx="8" fill="#E53E3E" />
+
+      {/* "AS HEARD ON" text */}
+      <text
+        x="60"
+        y="50"
+        textAnchor="middle"
+        fill="white"
+        fontFamily="'Inter', 'Helvetica Neue', sans-serif"
+        fontWeight="800"
+        fontSize="11"
+        letterSpacing="0.1em"
+      >
+        AS HEARD ON
+      </text>
+
+      {/* "KRUI" — large bold text */}
+      <text
+        x="60"
+        y="78"
+        textAnchor="middle"
+        fill="white"
+        fontFamily="'Bebas Neue', 'Impact', sans-serif"
+        fontWeight="700"
+        fontSize="36"
+        letterSpacing="0.04em"
+      >
+        KRUI
+      </text>
+
+      {/* "89.7 FM" subtitle */}
+      <text
+        x="60"
+        y="95"
+        textAnchor="middle"
+        fill="white"
+        fontFamily="'Inter', 'Helvetica Neue', sans-serif"
+        fontWeight="700"
+        fontSize="11"
+        letterSpacing="0.05em"
+      >
+        89.7 FM
+      </text>
+
+      {/* Feet */}
+      <rect x="36" y="108" width="8" height="6" rx="2" fill="white" />
+      <rect x="76" y="108" width="8" height="6" rx="2" fill="white" />
+    </svg>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
 export default async function Home() {
@@ -118,75 +203,150 @@ export default async function Home() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* ===== HERO SECTION ===== */}
-      <section className="relative flex flex-col items-center justify-center px-6 pt-24 pb-20 sm:pt-32 sm:pb-28 text-center overflow-hidden">
-        {/* Asymmetric cobalt color block — Blue Note cover composition */}
+      <section className="relative flex flex-col items-center justify-center text-center overflow-hidden min-h-[90vh] sm:min-h-[85vh]">
+        {/* Speakeasy image — full-bleed with cinematic reveal */}
+        <div className="absolute inset-0 hero-image-reveal overflow-hidden">
+          <img
+            src="/images/805-melrose.png"
+            alt="The speakeasy at 805 Melrose — home of That Jazz Show"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          {/* Dark gradient overlay — heavier at bottom for text readability */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(
+                to bottom,
+                rgba(0,0,0,0.35) 0%,
+                rgba(0,0,0,0.15) 30%,
+                rgba(0,0,0,0.40) 60%,
+                rgba(0,0,0,0.82) 100%
+              )`,
+            }}
+          />
+          {/* Cobalt tint overlay — ties image into site palette */}
+          <div
+            className="absolute inset-0 mix-blend-overlay opacity-25"
+            style={{ background: 'linear-gradient(135deg, #0B3D91, transparent 60%)' }}
+          />
+          {/* Vignette */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: 'radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.5) 100%)',
+            }}
+          />
+        </div>
+
+        {/* "As Heard on" badge — retro radio style, top-right */}
         <div
-          className="pointer-events-none absolute -top-20 -right-20 w-[500px] h-[700px] opacity-[0.07]"
-          style={{ background: '#0B3D91' }}
-        />
-        <div
-          className="pointer-events-none absolute bottom-0 -left-10 w-[300px] h-[200px] opacity-[0.05]"
-          style={{ background: '#34B1E4' }}
-        />
+          className="hero-fade-up absolute top-4 right-4 sm:top-6 sm:right-6 z-20"
+          style={{ animationDelay: '0.5s' }}
+        >
+          <AsHeardOnBadge />
+        </div>
 
-        <p className="relative text-sm sm:text-base uppercase tracking-[0.3em] text-muted mb-4">
-          As Heard on 89.7 KRUI-FM
-        </p>
+        {/* Content — layered above image */}
+        <div className="relative z-10 px-6 pt-32 pb-24 sm:pt-40 sm:pb-32 flex flex-col items-center">
+          <p
+            className="hero-fade-up font-display text-2xl sm:text-3xl lg:text-4xl uppercase tracking-[0.15em] text-white/90 mb-3"
+            style={{ animationDelay: '0.6s' }}
+          >
+            That Jazz Show
+          </p>
+          <p
+            className="hero-fade-up text-xs sm:text-sm uppercase tracking-[0.25em] text-white/40 mb-6"
+            style={{ animationDelay: '0.75s' }}
+          >
+            presents
+          </p>
 
-        <h1 className="relative font-display text-5xl sm:text-7xl lg:text-8xl font-bold text-foreground leading-none mb-4">
-          Tournament
-          <br />
-          <span className="text-accent">of Jazz</span>
-        </h1>
+          <h1
+            className="hero-fade-up font-display text-5xl sm:text-7xl lg:text-8xl font-bold text-white leading-none mb-2"
+            style={{ animationDelay: '0.9s' }}
+          >
+            Tournament
+          </h1>
+          <h1
+            className="hero-fade-up font-display text-5xl sm:text-7xl lg:text-8xl font-bold leading-none mb-6"
+            style={{ animationDelay: '1.1s', color: '#5DADE2' }}
+          >
+            of Jazz
+          </h1>
 
-        {/* Blue Note modernist rule */}
-        <div className="w-16 h-1 bg-accent mx-auto mb-8" aria-hidden="true" />
+          {/* Blue Note modernist rule */}
+          <div
+            className="hero-rule-expand h-1 bg-white/60 mx-auto mb-8"
+            style={{ animationDelay: '1.4s' }}
+            aria-hidden="true"
+          />
 
-        <p className="relative max-w-xl text-muted text-lg sm:text-xl leading-relaxed mb-8">
-          64 jazz legends. One champion. Make your picks.
-        </p>
+          <p
+            className="hero-fade-up max-w-2xl text-white/80 text-lg sm:text-xl leading-relaxed mb-10"
+            style={{ animationDelay: '1.5s' }}
+          >
+            64 jazz legends. One champion. Make your picks.
+          </p>
 
-        {/* CTAs */}
-        {isOpen ? (
-          <div className="relative flex flex-col items-center gap-4">
-            <Link
-              href="/play"
-              className="accent-glow inline-block bg-accent text-white font-display text-lg px-10 py-4 rounded-sm hover:bg-accent-light transition-colors tracking-wide uppercase"
+          {/* CTAs */}
+          {isOpen ? (
+            <div
+              className="hero-fade-up flex flex-col items-center gap-4"
+              style={{ animationDelay: '1.8s' }}
             >
-              Fill Out Your Bracket
-            </Link>
-            <Link
-              href="/leaderboard"
-              className="text-muted hover:text-accent transition-colors text-sm tracking-wide underline underline-offset-4 decoration-subtle hover:decoration-accent"
-            >
-              View Leaderboard
-            </Link>
-          </div>
-        ) : (
-          <div className="relative">
-            <p className="text-foreground font-display text-2xl uppercase">
-              {tournament ? statusLabel(tournament.status) : 'Coming Soon'}
-            </p>
-            {tournament && tournament.status !== 'setup' && (
+              <Link
+                href="/play"
+                className="inline-block bg-white/95 text-[#0B3D91] font-display text-lg px-10 py-4 rounded-sm hover:bg-white transition-colors tracking-wide uppercase shadow-lg shadow-black/30"
+              >
+                Fill Out Your Bracket
+              </Link>
               <Link
                 href="/leaderboard"
-                className="mt-4 inline-block text-muted hover:text-accent transition-colors text-sm tracking-wide underline underline-offset-4 decoration-subtle hover:decoration-accent"
+                className="text-white/60 hover:text-white transition-colors text-sm tracking-wide underline underline-offset-4 decoration-white/30 hover:decoration-white/70"
               >
                 View Leaderboard
               </Link>
-            )}
-          </div>
-        )}
+            </div>
+          ) : (
+            <div
+              className="hero-fade-up"
+              style={{ animationDelay: '1.8s' }}
+            >
+              <p className="text-white font-display text-2xl uppercase">
+                {tournament ? statusLabel(tournament.status) : 'Coming Soon'}
+              </p>
+              {tournament && tournament.status !== 'setup' && (
+                <Link
+                  href="/leaderboard"
+                  className="mt-4 inline-block text-white/60 hover:text-white transition-colors text-sm tracking-wide underline underline-offset-4 decoration-white/30 hover:decoration-white/70"
+                >
+                  View Leaderboard
+                </Link>
+              )}
+            </div>
+          )}
 
-        {/* Countdown Timer */}
-        {tournament?.submission_deadline && isOpen && (
-          <div className="mt-12">
-            <p className="text-xs uppercase tracking-[0.25em] text-dim mb-4">
-              Submissions close in
-            </p>
-            <CountdownTimer deadline={tournament.submission_deadline} />
-          </div>
-        )}
+          {/* Countdown Timer */}
+          {tournament?.submission_deadline && isOpen && (
+            <div
+              className="hero-fade-up mt-14"
+              style={{ animationDelay: '2.1s' }}
+            >
+              <p className="text-xs uppercase tracking-[0.25em] text-white/50 mb-4">
+                Submissions close in
+              </p>
+              <CountdownTimer deadline={tournament.submission_deadline} />
+            </div>
+          )}
+        </div>
+
+        {/* Bottom fade into page background */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-24 z-10 pointer-events-none"
+          style={{
+            background: 'linear-gradient(to bottom, transparent, var(--background))',
+          }}
+        />
       </section>
 
       {/* ===== HOW IT WORKS ===== */}

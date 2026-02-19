@@ -33,19 +33,19 @@
 :root {
   --background: #F8F9F9;
   --foreground: #0A0A0A;
-  --surface: #EDEEF0;
-  --surface-hover: #E0E2E6;
-  --surface-elevated: #D4D7DC;
-  --muted: #6B7280;
-  --dim: #9CA3AF;
-  --subtle: #C8CCD2;
+  --surface: #E4E6EB;
+  --surface-hover: #D6D9E0;
+  --surface-elevated: #C6CAD2;
+  --muted: #4B5563;
+  --dim: #6B7280;
+  --subtle: #9CA3AF;
   --accent: #0B3D91;
   --accent-light: #1A8FC4;
   --accent-muted: #5A7A94;
   --champion: #96780E;
   --champion-dim: #7D6400;
-  --charcoal: #D4D7DC;
-  --charcoal-light: #C8CCD2;
+  --charcoal: #C8CCD2;
+  --charcoal-light: #B8BCC4;
 }
 
 /* ------------------------------------------------------------------ */
@@ -146,4 +146,58 @@ body {
 }
 .pick-flash {
   animation: pick-flash 0.6s ease-out;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Hero image reveal — cinematic opening                              */
+/* ------------------------------------------------------------------ */
+@keyframes hero-image-reveal {
+  0% {
+    opacity: 0;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes hero-image-drift {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.04); }
+}
+
+@keyframes hero-fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-rule-expand {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  100% {
+    width: 64px;
+    opacity: 1;
+  }
+}
+
+.hero-image-reveal {
+  animation: hero-image-reveal 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both,
+             hero-image-drift 20s ease-in-out 1.8s infinite alternate;
+}
+
+.hero-fade-up {
+  animation: hero-fade-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-rule-expand {
+  animation: hero-rule-expand 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }

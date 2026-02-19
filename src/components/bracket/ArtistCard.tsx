@@ -43,7 +43,7 @@ function MediaIcon({ link, size = 'sm' }: { link: MediaLink; size?: 'sm' | 'md' 
       className={`inline-flex items-center justify-center rounded-full transition-colors ${
         size === 'sm'
           ? 'w-5 h-5 text-accent-muted hover:text-accent hover:bg-accent/10'
-          : 'gap-1.5 text-xs px-3 py-1.5 bg-accent-muted/30 border border-accent-muted/50 text-blue-300 hover:bg-accent-muted/50'
+          : 'gap-1.5 text-xs px-3 py-1.5 bg-accent-muted/30 border border-accent-muted/50 text-accent dark:text-blue-300 hover:bg-accent-muted/50'
       }`}
     >
       <Icon className={sizeClass} />
@@ -129,7 +129,7 @@ export function ArtistCard({
             href={artist.featured_track_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-1 inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-accent-muted/30 border border-accent-muted/50 text-blue-300 hover:bg-accent-muted/50 transition-colors"
+            className="mt-1 inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-accent-muted/30 border border-accent-muted/50 text-accent dark:text-blue-300 hover:bg-accent-muted/50 transition-colors"
           >
             <AudioIcon className="w-3 h-3" />
             {artist.featured_track_title || 'Listen'}
@@ -180,7 +180,7 @@ export function ArtistCard({
         group flex items-center gap-2 px-3 py-2 rounded-md bg-background border
         transition-[color,background-color,border-color,box-shadow,opacity] duration-200
         ${isWinner
-          ? 'border-l-[3px] border-l-champion border-t-gold/30 border-r-gold/30 border-b-gold/30 bg-champion/[0.08] text-champion'
+          ? 'border-l-[3px] border-l-champion border-t-champion/30 border-r-champion/30 border-b-champion/30 bg-champion/[0.08] text-champion'
           : 'border-transparent hover:border-accent/30 hover:bg-foreground/[0.04]'
         }
         ${isEliminated ? 'opacity-50' : ''}
@@ -191,9 +191,20 @@ export function ArtistCard({
       style={dragStyle}
       {...rest}
     >
-      <span className="text-xs text-dim font-mono min-w-[2rem]">
+      <span className="text-xs text-dim font-mono min-w-[2rem] shrink-0">
         ({artist.seed})
       </span>
+      {artist.photo_url ? (
+        <img
+          src={artist.photo_url}
+          alt=""
+          className="w-6 h-6 rounded-full object-cover shrink-0"
+        />
+      ) : (
+        <span className="w-6 h-6 rounded-full bg-surface-hover flex items-center justify-center shrink-0">
+          <span className="text-[9px] font-bold text-muted">{getInitials(artist.name)}</span>
+        </span>
+      )}
       <span
         className={`text-sm font-medium truncate ${
           isEliminated ? 'line-through text-dim' : isWinner ? 'text-champion' : 'text-foreground'

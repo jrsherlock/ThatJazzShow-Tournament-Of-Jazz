@@ -31,7 +31,7 @@ export function RegionCard({
       className="group w-full text-left rounded-xl border border-subtle hover:border-accent/50 bg-surface hover:bg-surface-hover transition-all duration-300 p-6 accent-glow focus:outline-none focus:ring-2 focus:ring-accent/40"
     >
       {/* Region name + subtitle */}
-      <h3 className="font-display text-xl sm:text-2xl font-bold transition-colors" style={{ color: colors.primary }}>
+      <h3 className="font-display text-2xl sm:text-3xl font-bold transition-colors" style={{ color: colors.primary }}>
         {REGION_LABELS[region]}
       </h3>
       <p className="text-sm text-muted italic mt-0.5 font-display">
