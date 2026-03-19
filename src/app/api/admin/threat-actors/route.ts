@@ -10,7 +10,7 @@ export async function GET() {
 
   const supabase = createServerClient();
   const { data, error } = await supabase
-    .from('artists')
+    .from('threat_actors')
     .select('*')
     .order('region')
     .order('seed');
@@ -34,10 +34,10 @@ export async function POST(request: NextRequest) {
     seed,
     region,
     bio,
-    instrument,
-    era,
-    featured_track_url,
-    featured_track_title,
+    affiliation,
+    country_flag,
+    intel_report_url,
+    notable_operations,
     media,
   } = body;
 
@@ -50,16 +50,16 @@ export async function POST(request: NextRequest) {
 
   const supabase = createServerClient();
   const { data, error } = await supabase
-    .from('artists')
+    .from('threat_actors')
     .insert({
       name,
       seed,
       region,
       bio: bio || null,
-      instrument: instrument || null,
-      era: era || null,
-      featured_track_url: featured_track_url || null,
-      featured_track_title: featured_track_title || null,
+      affiliation: affiliation || null,
+      country_flag: country_flag || null,
+      intel_report_url: intel_report_url || null,
+      notable_operations: notable_operations || null,
       media: media && media.length > 0 ? media : null,
     })
     .select()
@@ -85,10 +85,10 @@ export async function PUT(request: NextRequest) {
     seed,
     region,
     bio,
-    instrument,
-    era,
-    featured_track_url,
-    featured_track_title,
+    affiliation,
+    country_flag,
+    intel_report_url,
+    notable_operations,
     media,
   } = body;
 
@@ -98,16 +98,16 @@ export async function PUT(request: NextRequest) {
 
   const supabase = createServerClient();
   const { data, error } = await supabase
-    .from('artists')
+    .from('threat_actors')
     .update({
       name,
       seed,
       region,
       bio: bio || null,
-      instrument: instrument || null,
-      era: era || null,
-      featured_track_url: featured_track_url || null,
-      featured_track_title: featured_track_title || null,
+      affiliation: affiliation || null,
+      country_flag: country_flag || null,
+      intel_report_url: intel_report_url || null,
+      notable_operations: notable_operations || null,
       media: media && media.length > 0 ? media : null,
     })
     .eq('id', id)
@@ -136,7 +136,7 @@ export async function DELETE(request: NextRequest) {
 
   const supabase = createServerClient();
   const { error } = await supabase
-    .from('artists')
+    .from('threat_actors')
     .delete()
     .eq('id', id);
 

@@ -5,9 +5,9 @@ import { POINTS_PER_ROUND, GAMES_PER_ROUND } from './constants';
  * Score a participant's bracket against the master bracket.
  * Only counts rounds that have been revealed (revealedThroughRound).
  *
- * ESPN-style escalating points:
- *   Round 1 = 1pt, Round 2 = 2pts, Sweet 16 = 4pts,
- *   Elite 8 = 8pts, Final Four = 16pts, Championship = 32pts
+ * Escalating points:
+ *   Round of 32 = 1pt, Sweet 16 = 2pts, Elite 8 = 4pts,
+ *   Final Four = 8pts, Championship = 16pts
  */
 export function scoreSubmission(
   picks: Record<string, Pick>,
@@ -19,7 +19,7 @@ export function scoreSubmission(
   let total = 0;
   let maxPossible = 0;
 
-  for (let round = 1; round <= 6; round++) {
+  for (let round = 1; round <= 5; round++) {
     const points = POINTS_PER_ROUND[round];
     const games = GAMES_PER_ROUND[round];
 

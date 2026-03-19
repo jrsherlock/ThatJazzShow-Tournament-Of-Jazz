@@ -1,6 +1,6 @@
 import { createServerClient } from '@/lib/supabase';
 import { scoreSubmission } from '@/lib/scoring';
-import type { Artist, Submission, MasterBracket, Tournament } from '@/lib/types';
+import type { ThreatActor, Submission, MasterBracket, Tournament } from '@/lib/types';
 import type { Metadata } from 'next';
 import { BracketViewer } from '@/components/bracket/BracketViewer';
 
@@ -23,17 +23,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const displayName = submission?.display_name ?? 'A Participant';
 
   return {
-    title: `${displayName}'s Bracket | Tournament of Jazz`,
-    description: `Check out ${displayName}'s picks for the Tournament of Jazz — presented by That Jazz Show on KRUI 89.7 FM.`,
+    title: `${displayName}'s Bracket | Tournament of Threats`,
+    description: `Check out ${displayName}'s picks for the Tournament of Threats.`,
     openGraph: {
-      title: `${displayName}'s Bracket | Tournament of Jazz`,
-      description: `Check out ${displayName}'s picks for the Tournament of Jazz.`,
+      title: `${displayName}'s Bracket | Tournament of Threats`,
+      description: `Check out ${displayName}'s picks for the Tournament of Threats.`,
       type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${displayName}'s Bracket | Tournament of Jazz`,
-      description: `Check out ${displayName}'s picks for the Tournament of Jazz.`,
+      title: `${displayName}'s Bracket | Tournament of Threats`,
+      description: `Check out ${displayName}'s picks for the Tournament of Threats.`,
     },
   };
 }
@@ -87,10 +87,10 @@ export default async function BracketPage({ params }: PageProps) {
 
   const typedSubmission = submission as Submission;
 
-  // Fetch all artists, latest tournament, and master bracket in parallel
-  const [artistsResult, tournamentResult, masterBracketResult] = await Promise.all([
+  // Fetch all threat actors, latest tournament, and master bracket in parallel
+  const [actorsResult, tournamentResult, masterBracketResult] = await Promise.all([
     supabase
-      .from('artists')
+      .from('threat_actors')
       .select('*')
       .order('seed', { ascending: true }),
     supabase
@@ -105,14 +105,14 @@ export default async function BracketPage({ params }: PageProps) {
       .single(),
   ]);
 
-  const typedArtists = (artistsResult.data as Artist[]) ?? [];
+  const typedActors = (actorsResult.data as ThreatActor[]) ?? [];
   const typedTournament = tournamentResult.data as Tournament;
   const typedMasterBracket = masterBracketResult.data as MasterBracket | null;
 
   // Fallback tournament if not found (shouldn't happen but guard against it)
   const tournament: Tournament = typedTournament ?? {
     id: typedSubmission.tournament_id,
-    name: 'Tournament of Jazz',
+    name: 'Tournament of Threats',
     status: 'open' as const,
     submission_deadline: null,
     created_at: typedSubmission.created_at,
@@ -133,7 +133,7 @@ export default async function BracketPage({ params }: PageProps) {
   return (
     <BracketViewer
       submission={typedSubmission}
-      artists={typedArtists}
+      actors={typedActors}
       masterBracket={typedMasterBracket}
       tournament={tournament}
       score={score}

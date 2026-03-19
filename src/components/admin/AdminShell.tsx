@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 
 const navLinks = [
   { href: '/admin', label: 'Dashboard' },
-  { href: '/admin/artists', label: 'Artists' },
+  { href: '/admin/threatactors', label: 'Threat Actors' },
   { href: '/admin/matchup-previews', label: 'Matchup Previews' },
   { href: '/admin/master-bracket', label: 'Master Bracket' },
   { href: '/admin/reveal', label: 'Reveal' },
@@ -34,9 +34,9 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         <div className="p-5 border-b border-subtle">
           <Link href="/admin" className="block">
             <h1 className="text-lg font-bold text-accent tracking-wide">
-              Tournament of Jazz
+              Tournament of Threats
             </h1>
-            <p className="text-xs text-dim mt-0.5">Admin Panel</p>
+            <p className="text-xs text-dim mt-0.5">Command Center</p>
           </Link>
         </div>
 

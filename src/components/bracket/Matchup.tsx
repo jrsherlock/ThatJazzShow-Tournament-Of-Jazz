@@ -1,39 +1,39 @@
 'use client';
 
 import { useDroppable } from '@dnd-kit/core';
-import type { Artist } from '@/lib/types';
-import { ArtistCard } from './ArtistCard';
+import type { ThreatActor } from '@/lib/types';
+import { ThreatActorCard } from './ThreatActorCard';
 
 interface MatchupProps {
   matchupKey: string;
-  artistA: Artist | null;
-  artistB: Artist | null;
+  actorA: ThreatActor | null;
+  actorB: ThreatActor | null;
   winnerId: string | null;
   commentary?: string;
   onPickWinner: (matchupKey: string, winnerId: string) => void;
   onOpenPreview?: (matchupKey: string) => void;
-  onOpenArtistBio?: (artist: Artist, matchupKey: string) => void;
+  onOpenActorBio?: (actor: ThreatActor, matchupKey: string) => void;
   round: number;
   className?: string;
 }
 
 function TBDCard() {
   return (
-    <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-background border border-transparent">
-      <span className="text-xs text-gray-600 font-mono min-w-[2rem]">(?)</span>
-      <span className="text-sm text-gray-600 italic">TBD</span>
+    <div className="tbd-slot flex items-center gap-2 px-3 py-2 rounded-md bg-background border border-transparent">
+      <span className="text-xs text-accent-light/50 font-mono min-w-[2rem]">?</span>
+      <span className="text-sm text-accent-light/30 italic font-mono">---</span>
     </div>
   );
 }
 
 export function Matchup({
   matchupKey,
-  artistA,
-  artistB,
+  actorA,
+  actorB,
   winnerId,
   onPickWinner,
   onOpenPreview,
-  onOpenArtistBio,
+  onOpenActorBio,
   className = '',
 }: MatchupProps) {
   const { setNodeRef, isOver } = useDroppable({
@@ -50,25 +50,25 @@ export function Matchup({
         }
       }}
       className={`
-        relative rounded-lg bg-surface-hover border border-accent/20
-        p-2.5 accent-glow transition-all duration-200
-        ${isOver ? 'border-accent/60 shadow-[0_0_16px_rgba(11,61,145,0.3)] scale-[1.02]' : ''}
-        ${onOpenPreview ? 'cursor-pointer hover:border-accent/40 hover:shadow-[0_0_12px_rgba(11,61,145,0.15)]' : ''}
+        matchup-card relative rounded-lg bg-surface-hover border border-accent/20
+        p-2.5 transition-all duration-200
+        ${isOver ? 'border-accent-light/60 shadow-[0_0_20px_rgba(52,177,228,0.25)] scale-[1.02]' : ''}
+        ${onOpenPreview ? 'cursor-pointer hover:border-accent-light/40 hover:shadow-[0_0_14px_rgba(52,177,228,0.12)]' : ''}
         ${className}
       `}
     >
-      {/* Artist A */}
-      {artistA ? (
-        <ArtistCard
-          artist={artistA}
+      {/* Actor A */}
+      {actorA ? (
+        <ThreatActorCard
+          actor={actorA}
           variant="bracket"
           matchupKey={matchupKey}
-          isWinner={winnerId === artistA.id}
-          isEliminated={winnerId !== null && winnerId !== artistA.id}
+          isWinner={winnerId === actorA.id}
+          isEliminated={winnerId !== null && winnerId !== actorA.id}
           onSelect={() =>
-            onOpenArtistBio
-              ? onOpenArtistBio(artistA, matchupKey)
-              : onPickWinner(matchupKey, artistA.id)
+            onOpenActorBio
+              ? onOpenActorBio(actorA, matchupKey)
+              : onPickWinner(matchupKey, actorA.id)
           }
         />
       ) : (
@@ -78,7 +78,7 @@ export function Matchup({
       {/* VS divider */}
       {onOpenPreview ? (
         <div className="flex items-center gap-2 py-1 px-2">
-          <div className="flex-1 h-px bg-accent/10" />
+          <div className="vs-line flex-1 h-px bg-accent/10" />
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -86,10 +86,11 @@ export function Matchup({
             }}
             className="
               inline-flex items-center gap-1
-              bg-accent/10 border border-accent/30 rounded-full px-3 py-0.5
-              text-[10px] font-bold text-accent/40 tracking-widest uppercase
+              bg-accent-light/10 border border-accent-light/25 rounded-full px-3 py-0.5
+              text-[10px] font-bold vs-divider text-accent-light/40 tracking-widest uppercase font-mono
               transition-all duration-200
-              hover:text-accent hover:shadow-[0_0_8px_rgba(11,61,145,0.4)]
+              hover:text-accent-light hover:shadow-[0_0_8px_rgba(52,177,228,0.3)]
+              hover:border-accent-light/50
             "
             aria-label="Open matchup preview"
           >
@@ -109,30 +110,30 @@ export function Matchup({
             </svg>
             vs
           </button>
-          <div className="flex-1 h-px bg-accent/10" />
+          <div className="vs-line flex-1 h-px bg-accent/10" />
         </div>
       ) : (
         <div className="flex items-center gap-2 py-1 px-2">
-          <div className="flex-1 h-px bg-accent/10" />
-          <span className="text-[10px] font-bold text-accent/40 tracking-widest uppercase">
+          <div className="vs-line flex-1 h-px bg-accent-light/10" />
+          <span className="vs-divider text-[10px] font-bold text-accent-light/40 tracking-widest uppercase font-mono">
             vs
           </span>
-          <div className="flex-1 h-px bg-accent/10" />
+          <div className="vs-line flex-1 h-px bg-accent-light/10" />
         </div>
       )}
 
-      {/* Artist B */}
-      {artistB ? (
-        <ArtistCard
-          artist={artistB}
+      {/* Actor B */}
+      {actorB ? (
+        <ThreatActorCard
+          actor={actorB}
           variant="bracket"
           matchupKey={matchupKey}
-          isWinner={winnerId === artistB.id}
-          isEliminated={winnerId !== null && winnerId !== artistB.id}
+          isWinner={winnerId === actorB.id}
+          isEliminated={winnerId !== null && winnerId !== actorB.id}
           onSelect={() =>
-            onOpenArtistBio
-              ? onOpenArtistBio(artistB, matchupKey)
-              : onPickWinner(matchupKey, artistB.id)
+            onOpenActorBio
+              ? onOpenActorBio(actorB, matchupKey)
+              : onPickWinner(matchupKey, actorB.id)
           }
         />
       ) : (

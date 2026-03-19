@@ -1,28 +1,28 @@
 'use client';
 
 import { createPortal } from 'react-dom';
-import type { Artist } from '@/lib/types';
-import { ArtistCard } from './ArtistCard';
+import type { ThreatActor } from '@/lib/types';
+import { ThreatActorCard } from './ThreatActorCard';
 
-interface ArtistBioModalProps {
-  artist: Artist;
+interface ThreatActorBioModalProps {
+  actor: ThreatActor;
   matchupKey: string;
   winnerId: string | null;
   onPickWinner: (matchupKey: string, winnerId: string) => void;
   onClose: () => void;
 }
 
-export function ArtistBioModal({
-  artist,
+export function ThreatActorBioModal({
+  actor,
   matchupKey,
   winnerId,
   onPickWinner,
   onClose,
-}: ArtistBioModalProps) {
-  const isAlreadyPicked = winnerId === artist.id;
+}: ThreatActorBioModalProps) {
+  const isAlreadyPicked = winnerId === actor.id;
 
   function handlePickWinner() {
-    onPickWinner(matchupKey, artist.id);
+    onPickWinner(matchupKey, actor.id);
     onClose();
   }
 
@@ -73,15 +73,15 @@ export function ArtistBioModal({
           </svg>
         </button>
 
-        {/* Artist detail card */}
+        {/* Threat actor detail card */}
         <div className="p-5 pb-0">
-          <ArtistCard artist={artist} variant="detail" />
+          <ThreatActorCard actor={actor} variant="detail" />
         </div>
 
         {/* Bio section */}
-        {artist.bio && (
+        {actor.bio && (
           <div className="px-5 pt-4">
-            <p className="text-sm text-muted leading-relaxed">{artist.bio}</p>
+            <p className="text-sm text-muted leading-relaxed">{actor.bio}</p>
           </div>
         )}
 
@@ -97,7 +97,7 @@ export function ArtistBioModal({
               }
             `}
           >
-            {isAlreadyPicked ? `${artist.name} Selected` : `Pick ${artist.name} as Winner`}
+            {isAlreadyPicked ? `${actor.name} Selected` : `Pick ${actor.name} as Winner`}
           </button>
         </div>
       </div>

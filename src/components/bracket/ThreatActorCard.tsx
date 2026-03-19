@@ -1,14 +1,15 @@
 'use client';
 
+import { useState } from 'react';
 import { useDraggable } from '@dnd-kit/core';
-import type { Artist, MediaLink } from '@/lib/types';
+import type { ThreatActor, MediaLink } from '@/lib/types';
 
-interface ArtistCardProps {
-  artist: Artist;
+interface ThreatActorCardProps {
+  actor: ThreatActor;
   variant?: 'bracket' | 'detail';
   isWinner?: boolean;
   isEliminated?: boolean;
-  onSelect?: (artist: Artist) => void;
+  onSelect?: (actor: ThreatActor) => void;
   matchupKey?: string;
   className?: string;
   style?: React.CSSProperties;
@@ -61,8 +62,13 @@ function getInitials(name: string): string {
     .slice(0, 2);
 }
 
-export function ArtistCard({
-  artist,
+/** Check if string contains non-ASCII chars (emoji flags, pictographs, etc.) */
+function isEmojiFlag(str: string): boolean {
+  return !/^[\x20-\x7E]*$/.test(str);
+}
+
+export function ThreatActorCard({
+  actor,
   variant = 'bracket',
   isWinner = false,
   isEliminated = false,
@@ -71,7 +77,11 @@ export function ArtistCard({
   className = '',
   style,
   ...rest
-}: ArtistCardProps & Omit<React.HTMLAttributes<HTMLDivElement>, 'onSelect' | 'style'>) {
+}: ThreatActorCardProps & Omit<React.HTMLAttributes<HTMLDivElement>, 'onSelect' | 'style'>) {
+  const [imgError, setImgError] = useState(false);
+  const hasFlag = !!(actor.country_flag && isEmojiFlag(actor.country_flag));
+  const showPhoto = !!(actor.photo_url && !imgError);
+
   const isDraggable = variant === 'bracket' && !!matchupKey;
   const {
     attributes: dragAttributes,
@@ -80,9 +90,9 @@ export function ArtistCard({
     transform: dragTransform,
     isDragging,
   } = useDraggable({
-    id: matchupKey ? `drag-${matchupKey}-${artist.id}` : `noop-${artist.id}`,
+    id: matchupKey ? `drag-${matchupKey}-${actor.id}` : `noop-${actor.id}`,
     disabled: !isDraggable,
-    data: { matchupKey, artistId: artist.id, artist },
+    data: { matchupKey, actorId: actor.id, actor },
   });
 
   if (variant === 'detail') {
@@ -92,54 +102,74 @@ export function ArtistCard({
         style={style}
         {...rest}
       >
-        {/* Avatar */}
-        {artist.photo_url ? (
-          <img
-            src={artist.photo_url}
-            alt={artist.name}
-            className="w-20 h-20 rounded-full object-cover border-2 border-accent/40"
-          />
+        {/* Avatar / Flag */}
+        {showPhoto ? (
+          <div className="w-36 h-36 rounded-lg overflow-hidden flex items-center justify-center"
+            style={{
+              background: 'rgba(52, 177, 228, 0.04)',
+              border: '1px solid rgba(52, 177, 228, 0.15)',
+            }}
+          >
+            <img
+              src={actor.photo_url!}
+              alt={actor.name}
+              className="w-full h-full object-cover"
+              onError={() => setImgError(true)}
+            />
+          </div>
+        ) : hasFlag ? (
+          <div
+            className="w-36 h-36 rounded-lg flex items-center justify-center"
+            style={{
+              background: 'rgba(52, 177, 228, 0.04)',
+              border: '1px solid rgba(52, 177, 228, 0.15)',
+            }}
+          >
+            <span className="text-7xl leading-none">{actor.country_flag}</span>
+          </div>
         ) : (
           <div className="w-20 h-20 rounded-full bg-background border-2 border-accent/40 flex items-center justify-center">
             <span className="text-accent text-xl font-display font-bold">
-              {getInitials(artist.name)}
+              {getInitials(actor.name)}
             </span>
           </div>
         )}
 
         {/* Name */}
         <h3 className="font-display text-xl font-bold text-foreground text-center leading-tight">
-          {artist.name}
+          {actor.name}
         </h3>
 
         {/* Seed badge */}
         <span className="text-xs text-accent/80 bg-accent/10 px-2 py-0.5 rounded-full">
-          #{artist.seed} Seed
+          #{actor.seed} Seed
         </span>
 
-        {/* Instrument & Era */}
+        {/* Affiliation / Origin */}
         <div className="flex flex-col items-center gap-1 text-sm text-muted">
-          {artist.instrument && <span>{artist.instrument}</span>}
-          {artist.era && <span className="text-xs text-dim">{artist.era}</span>}
+          {actor.affiliation && <span>{actor.affiliation}</span>}
+          {actor.country_flag && !isEmojiFlag(actor.country_flag) && (
+            <span className="text-xs text-dim">{actor.country_flag}</span>
+          )}
         </div>
 
-        {/* Featured Track */}
-        {artist.featured_track_url && (
+        {/* Intel Report */}
+        {actor.intel_report_url && (
           <a
-            href={artist.featured_track_url}
+            href={actor.intel_report_url}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-1 inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-accent-muted/30 border border-accent-muted/50 text-accent dark:text-blue-300 hover:bg-accent-muted/50 transition-colors"
           >
             <AudioIcon className="w-3 h-3" />
-            {artist.featured_track_title || 'Listen'}
+            {actor.notable_operations || 'View Intel'}
           </a>
         )}
 
         {/* Media Links */}
-        {artist.media && artist.media.length > 0 && (
+        {actor.media && actor.media.length > 0 && (
           <div className="flex flex-wrap justify-center gap-1.5 mt-1">
-            {artist.media.map((link, i) => (
+            {actor.media.map((link, i) => (
               <MediaIcon key={i} link={link} size="md" />
             ))}
           </div>
@@ -167,23 +197,23 @@ export function ArtistCard({
       onClick={(e) => {
         if (onSelect) {
           e.stopPropagation();
-          onSelect(artist);
+          onSelect(actor);
         }
       }}
       onKeyDown={(e) => {
         if (onSelect && (e.key === 'Enter' || e.key === ' ')) {
           e.preventDefault();
-          onSelect(artist);
+          onSelect(actor);
         }
       }}
       className={`
-        group flex items-center gap-2 px-3 py-2 rounded-md bg-background border
+        actor-bracket-card group flex items-center gap-2 px-3 py-2 rounded-md bg-background border
         transition-[color,background-color,border-color,box-shadow,opacity] duration-200
         ${isWinner
-          ? 'border-l-[3px] border-l-champion border-t-champion/30 border-r-champion/30 border-b-champion/30 bg-champion/[0.08] text-champion'
-          : 'border-transparent hover:border-accent/30 hover:bg-foreground/[0.04]'
+          ? 'is-winner border-l-[3px] border-l-champion border-t-champion/30 border-r-champion/30 border-b-champion/30 bg-champion/[0.08] text-champion'
+          : 'border-transparent hover:border-accent-light/30 hover:bg-accent-light/[0.04]'
         }
-        ${isEliminated ? 'opacity-50' : ''}
+        ${isEliminated ? 'is-eliminated opacity-40' : ''}
         ${onSelect ? 'cursor-pointer' : ''}
         ${isDraggable ? 'touch-none' : ''}
         ${className}
@@ -191,30 +221,42 @@ export function ArtistCard({
       style={dragStyle}
       {...rest}
     >
-      <span className="text-xs text-dim font-mono min-w-[2rem] shrink-0">
-        ({artist.seed})
+      <span className="text-[11px] text-accent-light/50 font-mono min-w-[2rem] shrink-0 tabular-nums">
+        {actor.seed}
       </span>
-      {artist.photo_url ? (
+      {showPhoto ? (
         <img
-          src={artist.photo_url}
+          src={actor.photo_url!}
           alt=""
           className="w-6 h-6 rounded-full object-cover shrink-0"
+          onError={() => setImgError(true)}
         />
+      ) : hasFlag ? (
+        <span
+          className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-sm leading-none"
+          style={{
+            background: 'rgba(52, 177, 228, 0.08)',
+            border: '1px solid rgba(52, 177, 228, 0.15)',
+          }}
+          title={actor.affiliation ?? undefined}
+        >
+          {actor.country_flag}
+        </span>
       ) : (
         <span className="w-6 h-6 rounded-full bg-surface-hover flex items-center justify-center shrink-0">
-          <span className="text-[9px] font-bold text-muted">{getInitials(artist.name)}</span>
+          <span className="text-[9px] font-bold text-muted">{getInitials(actor.name)}</span>
         </span>
       )}
       <span
-        className={`text-sm font-medium truncate ${
-          isEliminated ? 'line-through text-dim' : isWinner ? 'text-champion' : 'text-foreground'
-        } ${onSelect && !isEliminated ? 'group-hover:underline decoration-accent/40 underline-offset-2' : ''}`}
+        className={`text-sm font-semibold truncate tracking-wide ${
+          isEliminated ? 'line-through text-dim/60' : isWinner ? 'text-champion' : 'text-foreground/90'
+        } ${onSelect && !isEliminated ? 'group-hover:text-accent-light transition-colors' : ''}`}
       >
-        {artist.name}
+        {actor.name}
       </span>
-      {artist.media && artist.media.length > 0 && (
+      {actor.media && actor.media.length > 0 && (
         <span className="flex items-center gap-0.5 ml-auto shrink-0">
-          {artist.media.slice(0, 3).map((link, i) => (
+          {actor.media.slice(0, 3).map((link, i) => (
             <MediaIcon key={i} link={link} size="sm" />
           ))}
         </span>

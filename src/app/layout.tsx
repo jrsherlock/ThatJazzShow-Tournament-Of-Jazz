@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Bebas_Neue } from "next/font/google";
+import { Inter, Orbitron } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import "./globals.css";
@@ -9,16 +9,16 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-const bebasNeue = Bebas_Neue({
-  variable: "--font-bebas",
+const orbitron = Orbitron({
+  variable: "--font-orbitron",
   subsets: ["latin"],
-  weight: ["400"],
+  weight: ["400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
-  title: "Tournament of Jazz | That Jazz Show on KRUI 89.7 FM",
+  title: "Tournament of Threats",
   description:
-    "Fill out your bracket, pick your champions, and compete in the annual Tournament of Jazz — presented by That Jazz Show on 89.7 KRUI-FM.",
+    "32 of the world's most dangerous threat actors. One champion. Make your picks in the ultimate cybersecurity bracket.",
 };
 
 export default function RootLayout({
@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${bebasNeue.variable} antialiased bg-background text-foreground`}
+        className={`${inter.variable} ${orbitron.variable} antialiased bg-background text-foreground`}
       >
         <ThemeProvider>
           <ThemeToggle />

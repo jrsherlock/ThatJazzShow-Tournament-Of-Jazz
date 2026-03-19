@@ -1,16 +1,16 @@
 'use client';
 
 import { createPortal } from 'react-dom';
-import type { Artist, MatchupPreview } from '@/lib/types';
-import { ArtistCard } from './ArtistCard';
+import type { ThreatActor, MatchupPreview } from '@/lib/types';
+import { ThreatActorCard } from './ThreatActorCard';
 import { CommentaryInput } from './CommentaryInput';
 
 interface MatchupPreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   matchupKey: string;
-  artistA: Artist | null;
-  artistB: Artist | null;
+  actorA: ThreatActor | null;
+  actorB: ThreatActor | null;
   preview: MatchupPreview | null;
   winnerId: string | null;
   commentary: string;
@@ -22,8 +22,8 @@ export function MatchupPreviewModal({
   isOpen,
   onClose,
   matchupKey,
-  artistA,
-  artistB,
+  actorA,
+  actorB,
   preview,
   winnerId,
   commentary,
@@ -32,12 +32,12 @@ export function MatchupPreviewModal({
 }: MatchupPreviewModalProps) {
   if (!isOpen) return null;
 
-  const hasBothArtists = artistA !== null && artistB !== null;
+  const hasBothActors = actorA !== null && actorB !== null;
 
   // Auto-generate headline if none provided
   const headline =
     preview?.headline ??
-    (hasBothArtists ? `${artistA.name} vs ${artistB.name}` : 'Matchup Preview');
+    (hasBothActors ? `${actorA.name} vs ${actorB.name}` : 'Matchup Preview');
 
   const modalContent = (
     <div
@@ -87,12 +87,12 @@ export function MatchupPreviewModal({
             {headline}
           </h2>
 
-          {hasBothArtists ? (
+          {hasBothActors ? (
             <>
-              {/* Artist detail cards side-by-side */}
+              {/* Threat actor detail cards side-by-side */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <ArtistCard artist={artistA} variant="detail" />
-                <ArtistCard artist={artistB} variant="detail" />
+                <ThreatActorCard actor={actorA} variant="detail" />
+                <ThreatActorCard actor={actorB} variant="detail" />
               </div>
 
               {/* Host preview text */}
@@ -127,30 +127,30 @@ export function MatchupPreviewModal({
               {/* Pick buttons */}
               <div className="grid grid-cols-2 gap-3">
                 <button
-                  onClick={() => onPickWinner(matchupKey, artistA.id)}
+                  onClick={() => onPickWinner(matchupKey, actorA.id)}
                   className={`
                     px-4 py-3 rounded-lg font-semibold text-sm transition-all duration-200
                     ${
-                      winnerId === artistA.id
+                      winnerId === actorA.id
                         ? 'bg-accent text-white'
                         : 'border border-accent/40 text-accent hover:bg-accent/10'
                     }
                   `}
                 >
-                  Pick {artistA.name}
+                  Pick {actorA.name}
                 </button>
                 <button
-                  onClick={() => onPickWinner(matchupKey, artistB.id)}
+                  onClick={() => onPickWinner(matchupKey, actorB.id)}
                   className={`
                     px-4 py-3 rounded-lg font-semibold text-sm transition-all duration-200
                     ${
-                      winnerId === artistB.id
+                      winnerId === actorB.id
                         ? 'bg-accent text-white'
                         : 'border border-accent/40 text-accent hover:bg-accent/10'
                     }
                   `}
                 >
-                  Pick {artistB.name}
+                  Pick {actorB.name}
                 </button>
               </div>
 

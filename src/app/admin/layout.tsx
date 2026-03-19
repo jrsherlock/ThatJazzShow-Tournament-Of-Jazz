@@ -3,7 +3,7 @@ import AdminLoginForm from '@/components/admin/AdminLoginForm';
 import AdminShell from '@/components/admin/AdminShell';
 
 export const metadata = {
-  title: 'Admin | Tournament of Jazz',
+  title: 'Admin | Tournament of Threats',
 };
 
 export default async function AdminLayout({

@@ -1,4 +1,4 @@
-import type { Artist, Region, Pick } from './types';
+import type { ThreatActor, Region, Pick } from './types';
 import { REGIONS, ROUND_1_SEED_MATCHUPS } from './constants';
 
 /**
@@ -19,52 +19,52 @@ export function parseMatchupKey(key: string): { round: number; matchupIndex: num
 
 /**
  * Get the number of matchups in a given round.
- * Round 1 = 32, Round 2 = 16, ..., Round 6 = 1
+ * Round 1 = 16, Round 2 = 8, ..., Round 5 = 1
  */
 export function matchupsInRound(round: number): number {
-  return Math.pow(2, 6 - round); // 32, 16, 8, 4, 2, 1
+  return Math.pow(2, 5 - round); // 16, 8, 4, 2, 1
 }
 
 /**
- * Get the region for a given round 1 matchup index (0-31).
- * Matchups 0-7 = region 0 (vocalists), 8-15 = region 1 (bandleaders), etc.
+ * Get the region for a given round 1 matchup index (0-15).
+ * Matchups 0-3 = region 0, 4-7 = region 1, etc.
  */
 export function regionForMatchup(matchupIndex: number): Region {
-  const regionIndex = Math.floor(matchupIndex / 8);
+  const regionIndex = Math.floor(matchupIndex / 4);
   return REGIONS[regionIndex];
 }
 
 /**
- * Get the two Round 1 artists for a given matchup within a region.
- * regionMatchupIndex is 0-7 (within the region).
+ * Get the two Round 1 threat actors for a given matchup within a region.
+ * regionMatchupIndex is 0-3 (within the region).
  */
-export function getRound1Artists(
-  artists: Artist[],
+export function getRound1Actors(
+  actors: ThreatActor[],
   region: Region,
   regionMatchupIndex: number
-): [Artist | null, Artist | null] {
+): [ThreatActor | null, ThreatActor | null] {
   const [seedA, seedB] = ROUND_1_SEED_MATCHUPS[regionMatchupIndex];
-  const artistA = artists.find((a) => a.region === region && a.seed === seedA) ?? null;
-  const artistB = artists.find((a) => a.region === region && a.seed === seedB) ?? null;
-  return [artistA, artistB];
+  const actorA = actors.find((a) => a.region === region && a.seed === seedA) ?? null;
+  const actorB = actors.find((a) => a.region === region && a.seed === seedB) ?? null;
+  return [actorA, actorB];
 }
 
 /**
  * Get all Round 1 matchups for a specific region.
- * Returns array of 8 matchups with their artists.
+ * Returns array of 4 matchups with their threat actors.
  */
 export function getRegionRound1Matchups(
-  artists: Artist[],
+  actors: ThreatActor[],
   region: Region
-): { key: string; artistA: Artist | null; artistB: Artist | null }[] {
+): { key: string; actorA: ThreatActor | null; actorB: ThreatActor | null }[] {
   const regionIndex = REGIONS.indexOf(region);
   return ROUND_1_SEED_MATCHUPS.map((_, i) => {
-    const globalIndex = regionIndex * 8 + i;
-    const [artistA, artistB] = getRound1Artists(artists, region, i);
+    const globalIndex = regionIndex * 4 + i;
+    const [actorA, actorB] = getRound1Actors(actors, region, i);
     return {
       key: matchupKey(1, globalIndex),
-      artistA,
-      artistB,
+      actorA,
+      actorB,
     };
   });
 }
@@ -95,12 +95,12 @@ export function getChildMatchupKey(
   round: number,
   matchupIndex: number
 ): string | null {
-  if (round >= 6) return null;
+  if (round >= 5) return null;
   return matchupKey(round + 1, Math.floor(matchupIndex / 2));
 }
 
 /**
- * Determine whether a given artist is artist A or B in the child matchup.
+ * Determine whether a given actor is actor A or B in the child matchup.
  * Even matchup indices feed into position A, odd into position B.
  */
 export function getPositionInChild(matchupIndex: number): 'A' | 'B' {
@@ -108,20 +108,20 @@ export function getPositionInChild(matchupIndex: number): 'A' | 'B' {
 }
 
 /**
- * Get the two artists for any matchup (round >= 2) based on current picks.
- * For round 1, use getRound1Artists instead.
- * For later rounds, the artists are the winners of the two parent matchups.
+ * Get the two actors for any matchup (round >= 2) based on current picks.
+ * For round 1, use getRound1Actors instead.
+ * For later rounds, the actors are the winners of the two parent matchups.
  */
-export function getMatchupArtists(
+export function getMatchupActors(
   round: number,
   matchupIndex: number,
   picks: Record<string, Pick>,
-  artists: Artist[]
-): [Artist | null, Artist | null] {
+  actors: ThreatActor[]
+): [ThreatActor | null, ThreatActor | null] {
   if (round === 1) {
     const region = regionForMatchup(matchupIndex);
-    const regionMatchupIndex = matchupIndex % 8;
-    return getRound1Artists(artists, region, regionMatchupIndex);
+    const regionMatchupIndex = matchupIndex % 4;
+    return getRound1Actors(actors, region, regionMatchupIndex);
   }
 
   const parentKeys = getParentMatchupKeys(round, matchupIndex);
@@ -131,10 +131,10 @@ export function getMatchupArtists(
   const pickA = picks[parentKeyA];
   const pickB = picks[parentKeyB];
 
-  const artistA = pickA ? artists.find((a) => a.id === pickA.winnerId) ?? null : null;
-  const artistB = pickB ? artists.find((a) => a.id === pickB.winnerId) ?? null : null;
+  const actorA = pickA ? actors.find((a) => a.id === pickA.winnerId) ?? null : null;
+  const actorB = pickB ? actors.find((a) => a.id === pickB.winnerId) ?? null : null;
 
-  return [artistA, artistB];
+  return [actorA, actorB];
 }
 
 /**
@@ -159,7 +159,7 @@ export function cascadePicks(
   let currentRound = changedRound + 1;
   let currentMatchupIndex = Math.floor(changedMatchupIndex / 2);
 
-  while (currentRound <= 6) {
+  while (currentRound <= 5) {
     const key = matchupKey(currentRound, currentMatchupIndex);
     const pick = updatedPicks[key];
 
@@ -184,11 +184,11 @@ export function allKeysForRound(round: number): string[] {
 }
 
 /**
- * Generate all 63 matchup keys across all 6 rounds.
+ * Generate all 31 matchup keys across all 5 rounds.
  */
 export function allMatchupKeys(): string[] {
   const keys: string[] = [];
-  for (let round = 1; round <= 6; round++) {
+  for (let round = 1; round <= 5; round++) {
     keys.push(...allKeysForRound(round));
   }
   return keys;
@@ -202,55 +202,52 @@ export function countPicks(picks: Record<string, Pick>): number {
 }
 
 /**
- * Check if the bracket is complete (all 63 picks made).
+ * Check if the bracket is complete (all 31 picks made).
  */
 export function isBracketComplete(picks: Record<string, Pick>): boolean {
-  return countPicks(picks) === 63;
+  return countPicks(picks) === 31;
 }
 
 /**
- * Count how many picks have been made within a single region (rounds 1-4).
- * Max = 15 (8 + 4 + 2 + 1).
+ * Count how many picks have been made within a single region (rounds 1-3).
+ * Max = 7 (4 + 2 + 1).
  */
 export function getRegionPickCount(
   picks: Record<string, Pick>,
   regionIndex: number
 ): number {
   let count = 0;
-  for (let i = 0; i < 8; i++) {
-    if (picks[matchupKey(1, regionIndex * 8 + i)]) count++;
-  }
   for (let i = 0; i < 4; i++) {
-    if (picks[matchupKey(2, regionIndex * 4 + i)]) count++;
+    if (picks[matchupKey(1, regionIndex * 4 + i)]) count++;
   }
   for (let i = 0; i < 2; i++) {
-    if (picks[matchupKey(3, regionIndex * 2 + i)]) count++;
+    if (picks[matchupKey(2, regionIndex * 2 + i)]) count++;
   }
-  if (picks[matchupKey(4, regionIndex)]) count++;
+  if (picks[matchupKey(3, regionIndex)]) count++;
   return count;
 }
 
 /**
- * Get the artist who won a region's Elite 8 matchup (round 4).
+ * Get the threat actor who won a region's Elite 8 matchup (round 3).
  * Returns null if not yet picked.
  */
 export function getRegionWinner(
   picks: Record<string, Pick>,
-  artists: Artist[],
+  actors: ThreatActor[],
   regionIndex: number
-): Artist | null {
-  const pick = picks[matchupKey(4, regionIndex)];
+): ThreatActor | null {
+  const pick = picks[matchupKey(3, regionIndex)];
   if (!pick) return null;
-  return artists.find((a) => a.id === pick.winnerId) ?? null;
+  return actors.find((a) => a.id === pick.winnerId) ?? null;
 }
 
 /**
  * Get the region for a matchup at any round.
- * Rounds 1-4 are within regions. Round 5 (Final Four) and 6 (Championship) are cross-region.
+ * Rounds 1-3 are within regions. Round 4 (Final Four) and 5 (Championship) are cross-region.
  */
 export function getRegionForMatchup(round: number, matchupIndex: number): Region | null {
-  if (round >= 5) return null; // Final Four and Championship are cross-region
-  // In rounds 1-4, trace back to round 1 to determine region
+  if (round >= 4) return null; // Final Four and Championship are cross-region
+  // In rounds 1-3, trace back to round 1 to determine region
   let idx = matchupIndex;
   for (let r = round; r > 1; r--) {
     idx = idx * 2;

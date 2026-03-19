@@ -75,7 +75,7 @@ export function ScoreBreakdown({ score, revealedThrough }: ScoreBreakdownProps) 
             </tr>
           </thead>
           <tbody>
-            {[1, 2, 3, 4, 5, 6].map((round) => {
+            {[1, 2, 3, 4, 5].map((round) => {
               const isRevealed = round <= revealedThrough;
               const roundPoints = score.byRound[round] ?? 0;
               const maxForRound = score.maxPossibleByRound[round] ?? POINTS_PER_ROUND[round] * GAMES_PER_ROUND[round];

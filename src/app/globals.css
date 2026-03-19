@@ -3,7 +3,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ------------------------------------------------------------------ */
-/*  Theme tokens — Blue Note Records Modernist                         */
+/*  Theme tokens — Dark Tactical                                       */
 /*  Tailwind generates utilities like bg-background, text-accent, etc. */
 /*  Values reference CSS vars that switch with .dark class.            */
 /* ------------------------------------------------------------------ */
@@ -24,7 +24,7 @@
   --color-charcoal: var(--charcoal);
   --color-charcoal-light: var(--charcoal-light);
   --font-sans: var(--font-inter);
-  --font-display: var(--font-bebas);
+  --font-display: var(--font-orbitron);
 }
 
 /* ------------------------------------------------------------------ */
@@ -39,9 +39,9 @@
   --muted: #4B5563;
   --dim: #6B7280;
   --subtle: #9CA3AF;
-  --accent: #0B3D91;
-  --accent-light: #1A8FC4;
-  --accent-muted: #5A7A94;
+  --accent: #B91C1C;
+  --accent-light: #EF4444;
+  --accent-muted: #7F1D1D;
   --champion: #96780E;
   --champion-dim: #7D6400;
   --charcoal: #C8CCD2;
@@ -49,7 +49,7 @@
 }
 
 /* ------------------------------------------------------------------ */
-/*  Dark theme (Blue Note)                                             */
+/*  Dark theme (Tactical)                                              */
 /* ------------------------------------------------------------------ */
 .dark {
   --background: #0A0A0A;
@@ -60,9 +60,9 @@
   --muted: #9CA3AF;
   --dim: #6B7280;
   --subtle: #333333;
-  --accent: #3B7DD8;
-  --accent-light: #34B1E4;
-  --accent-muted: #5A7EA0;
+  --accent: #DC2626;
+  --accent-light: #EF4444;
+  --accent-muted: #991B1B;
   --champion: #D4A843;
   --champion-dim: #C49A3A;
   --charcoal: #1A1A1A;
@@ -75,20 +75,20 @@ body {
   font-family: var(--font-sans), system-ui, sans-serif;
 }
 
-/* Blue Note modernist divider — asymmetric bar + fade */
-.blue-note-divider {
+/* Tactical divider — asymmetric bar + fade */
+.tactical-divider {
   display: flex;
   align-items: center;
   gap: 0;
 }
-.blue-note-divider::before {
+.tactical-divider::before {
   content: '';
   width: 40px;
   height: 4px;
   background: var(--accent);
   flex-shrink: 0;
 }
-.blue-note-divider::after {
+.tactical-divider::after {
   content: '';
   flex: 1;
   height: 1px;
@@ -108,13 +108,114 @@ body {
   transition: box-shadow 0.3s ease;
 }
 .region-glow:hover {
-  box-shadow: 0 0 25px var(--region-glow, rgba(11, 61, 145, 0.2));
+  box-shadow: 0 0 25px var(--region-glow, rgba(185, 28, 28, 0.2));
 }
 
 /* Bracket connector lines */
 .bracket-line {
   position: absolute;
   border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Matrix bracket theme — immersive dark overlay                      */
+/* ------------------------------------------------------------------ */
+
+/* Bracket page forces dark palette for the matrix look */
+.bracket-matrix {
+  --background: #120505;
+  --surface: rgba(18, 8, 8, 0.85);
+  --surface-hover: rgba(28, 12, 12, 0.9);
+  --surface-elevated: rgba(36, 16, 16, 0.9);
+  --subtle: rgba(220, 38, 38, 0.15);
+  color-scheme: dark;
+}
+
+/* Matchup cards inside the matrix bracket */
+.bracket-matrix .matchup-card {
+  background: rgba(18, 8, 8, 0.85);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 1px rgba(239, 68, 68, 0.15);
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.bracket-matrix .matchup-card:hover {
+  border-color: rgba(220, 38, 38, 0.45);
+  box-shadow:
+    0 0 12px rgba(239, 68, 68, 0.15),
+    inset 0 0 12px rgba(239, 68, 68, 0.04);
+}
+
+/* Region header badge inside matrix */
+.bracket-matrix .region-header-badge {
+  background: rgba(18, 8, 8, 0.9);
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  backdrop-filter: blur(6px);
+}
+
+/* Round column labels */
+.bracket-matrix .round-label {
+  background: rgba(18, 8, 8, 0.7);
+  border: 1px solid rgba(220, 38, 38, 0.15);
+  backdrop-filter: blur(4px);
+}
+
+/* TBD placeholder in matrix style */
+.bracket-matrix .tbd-slot {
+  background: rgba(18, 8, 8, 0.6);
+  border: 1px dashed rgba(220, 38, 38, 0.2);
+}
+
+/* Connector lines — glowing red */
+.bracket-matrix .connector-line {
+  background-color: rgba(239, 68, 68, 0.35);
+  box-shadow: 0 0 4px rgba(239, 68, 68, 0.2);
+}
+.bracket-matrix .connector-vertical {
+  background-color: rgba(239, 68, 68, 0.25);
+  box-shadow: 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+/* Actor cards inside matrix bracket */
+.bracket-matrix .actor-bracket-card {
+  background: rgba(14, 6, 6, 0.7);
+  border: 1px solid transparent;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+.bracket-matrix .actor-bracket-card:hover {
+  background: rgba(28, 12, 12, 0.8);
+  border-color: rgba(220, 38, 38, 0.3);
+}
+.bracket-matrix .actor-bracket-card.is-winner {
+  border-left: 3px solid var(--champion);
+  background: rgba(212, 168, 67, 0.08);
+}
+.bracket-matrix .actor-bracket-card.is-eliminated {
+  opacity: 0.4;
+}
+
+/* Sticky header in matrix mode */
+.bracket-matrix .bracket-header {
+  background: rgba(12, 5, 5, 0.95);
+  border-bottom: 1px solid rgba(220, 38, 38, 0.15);
+  backdrop-filter: blur(12px);
+}
+
+/* Progress bar glow */
+.bracket-matrix .progress-track {
+  background: rgba(220, 38, 38, 0.1);
+}
+.bracket-matrix .progress-fill {
+  background: linear-gradient(90deg, #DC2626, #EF4444);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+}
+
+/* VS divider in matrix mode */
+.bracket-matrix .vs-divider {
+  color: rgba(239, 68, 68, 0.5);
+}
+.bracket-matrix .vs-line {
+  background: rgba(239, 68, 68, 0.12);
 }
 
 /* Scrollbar styling */

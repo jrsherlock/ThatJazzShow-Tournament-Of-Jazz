@@ -1,5 +1,5 @@
 import { createServerClient } from '@/lib/supabase';
-import type { Artist, Tournament, MatchupPreview } from '@/lib/types';
+import type { ThreatActor, Tournament, MatchupPreview } from '@/lib/types';
 import BracketBuilder from '@/components/bracket/BracketBuilder';
 
 export const dynamic = 'force-dynamic';
@@ -30,12 +30,12 @@ export default async function PlayPage() {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V4.5A2.25 2.25 0 0016.5 2.25H6a2.25 2.25 0 00-2.25 2.25v15A2.25 2.25 0 006 21.75h4.5"
+                d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
               />
             </svg>
           </div>
           <h1 className="font-display text-2xl font-semibold text-accent mb-3">
-            The Tournament of Jazz
+            The Tournament of Threats
           </h1>
           <p className="text-muted text-sm leading-relaxed mb-6">
             {tournament?.status === 'setup'
@@ -46,7 +46,7 @@ export default async function PlayPage() {
                   ? 'The results are being revealed. Check back to see how your bracket stacks up.'
                   : tournament?.status === 'complete'
                     ? 'This tournament has concluded. Thanks for playing!'
-                    : 'The Tournament of Jazz is not currently accepting brackets. Check back soon!'}
+                    : 'The Tournament of Threats is not currently accepting brackets. Check back soon!'}
           </p>
           <a
             href="/"
@@ -59,9 +59,9 @@ export default async function PlayPage() {
     );
   }
 
-  // Fetch all artists
-  const { data: artists } = await supabase
-    .from('artists')
+  // Fetch all threat actors
+  const { data: actors } = await supabase
+    .from('threat_actors')
     .select('*')
     .order('seed', { ascending: true });
 
@@ -73,7 +73,7 @@ export default async function PlayPage() {
 
   return (
     <BracketBuilder
-      artists={(artists as Artist[]) ?? []}
+      actors={(actors as ThreatActor[]) ?? []}
       tournament={tournament as Tournament}
       previews={(previews as MatchupPreview[]) ?? []}
     />

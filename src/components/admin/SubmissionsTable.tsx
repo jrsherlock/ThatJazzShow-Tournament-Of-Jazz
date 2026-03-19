@@ -19,12 +19,11 @@ interface SubmissionsTableProps {
 }
 
 const ROUND_SHORT_NAMES: Record<number, string> = {
-  1: 'R1',
-  2: 'R2',
-  3: 'S16',
-  4: 'E8',
-  5: 'FF',
-  6: 'Champ',
+  1: 'R32',
+  2: 'S16',
+  3: 'E8',
+  4: 'FF',
+  5: 'Champ',
 };
 
 export default function SubmissionsTable({
@@ -67,7 +66,7 @@ export default function SubmissionsTable({
           </p>
           <p className="text-2xl font-bold text-zinc-200">
             {revealedThroughRound}{' '}
-            <span className="text-sm font-normal text-dim">of 6</span>
+            <span className="text-sm font-normal text-dim">of 5</span>
           </p>
         </div>
 
@@ -120,7 +119,7 @@ export default function SubmissionsTable({
                   <th className="text-center px-4 py-3 text-accent font-semibold uppercase tracking-wider text-xs w-20">
                     Total
                   </th>
-                  {[1, 2, 3, 4, 5, 6].map((round) => (
+                  {[1, 2, 3, 4, 5].map((round) => (
                     <th
                       key={round}
                       className={`text-center px-3 py-3 font-semibold uppercase tracking-wider text-xs w-16 ${
@@ -189,7 +188,7 @@ export default function SubmissionsTable({
                               : '\u2014'}
                           </span>
                         </td>
-                        {[1, 2, 3, 4, 5, 6].map((round) => (
+                        {[1, 2, 3, 4, 5].map((round) => (
                           <td
                             key={round}
                             className={`px-3 py-3 text-center text-xs ${
@@ -254,7 +253,7 @@ function SubmissionDetails({
           Score Breakdown
         </h4>
         <div className="flex flex-wrap gap-3">
-          {[1, 2, 3, 4, 5, 6].map((round) => {
+          {[1, 2, 3, 4, 5].map((round) => {
             const isRevealed = round <= revealedThroughRound;
             const maxForRound = POINTS_PER_ROUND[round] * GAMES_PER_ROUND[round];
             const scored = submission.score.byRound[round];

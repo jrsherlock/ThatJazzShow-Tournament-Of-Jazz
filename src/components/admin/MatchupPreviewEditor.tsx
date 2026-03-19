@@ -2,18 +2,18 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import type { Artist, Tournament, MatchupPreview, Region } from '@/lib/types';
+import type { ThreatActor, Tournament, MatchupPreview, Region } from '@/lib/types';
 import { REGIONS, REGION_LABELS, ROUND_1_SEED_MATCHUPS } from '@/lib/constants';
 
 interface Props {
   tournament: Tournament;
-  artists: Artist[];
+  actors: ThreatActor[];
   existingPreviews: MatchupPreview[];
 }
 
-export function MatchupPreviewEditor({ tournament, artists, existingPreviews }: Props) {
+export function MatchupPreviewEditor({ tournament, actors, existingPreviews }: Props) {
   const router = useRouter();
-  const [activeRegion, setActiveRegion] = useState<Region>('vocalists');
+  const [activeRegion, setActiveRegion] = useState<Region>('state_superpowers');
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -29,10 +29,10 @@ export function MatchupPreviewEditor({ tournament, artists, existingPreviews }: 
     return ROUND_1_SEED_MATCHUPS.map(([seedA, seedB], i) => {
       const globalIndex = regionIndex * 8 + i;
       const key = `1-${globalIndex}`;
-      const artistA = artists.find((a) => a.region === region && a.seed === seedA);
-      const artistB = artists.find((a) => a.region === region && a.seed === seedB);
+      const actorA = actors.find((a) => a.region === region && a.seed === seedA);
+      const actorB = actors.find((a) => a.region === region && a.seed === seedB);
       const preview = previewMap.get(key);
-      return { key, seedA, seedB, artistA, artistB, preview };
+      return { key, seedA, seedB, actorA, actorB, preview };
     });
   }
 
@@ -117,7 +117,7 @@ export function MatchupPreviewEditor({ tournament, artists, existingPreviews }: 
 
       {/* Matchup List */}
       <div className="space-y-4">
-        {matchups.map(({ key, seedA, seedB, artistA, artistB, preview }) => (
+        {matchups.map(({ key, seedA, seedB, actorA, actorB, preview }) => (
           <div
             key={key}
             className="bg-surface-hover rounded-lg border border-accent/20 overflow-hidden"
@@ -127,17 +127,17 @@ export function MatchupPreviewEditor({ tournament, artists, existingPreviews }: 
               <div className="flex items-center gap-6">
                 <div className="text-center">
                   <span className="text-xs text-dim">#{seedA}</span>
-                  <p className="text-foreground font-medium">{artistA?.name ?? 'TBD'}</p>
-                  {artistA?.instrument && (
-                    <p className="text-xs text-dim">{artistA.instrument}</p>
+                  <p className="text-foreground font-medium">{actorA?.name ?? 'TBD'}</p>
+                  {actorA?.affiliation && (
+                    <p className="text-xs text-dim">{actorA.affiliation}</p>
                   )}
                 </div>
                 <span className="text-accent font-bold text-lg">vs</span>
                 <div className="text-center">
                   <span className="text-xs text-dim">#{seedB}</span>
-                  <p className="text-foreground font-medium">{artistB?.name ?? 'TBD'}</p>
-                  {artistB?.instrument && (
-                    <p className="text-xs text-dim">{artistB.instrument}</p>
+                  <p className="text-foreground font-medium">{actorB?.name ?? 'TBD'}</p>
+                  {actorB?.affiliation && (
+                    <p className="text-xs text-dim">{actorB.affiliation}</p>
                   )}
                 </div>
               </div>
@@ -174,7 +174,7 @@ export function MatchupPreviewEditor({ tournament, artists, existingPreviews }: 
               <div className="p-4 border-t border-accent/20 bg-background/50 space-y-4">
                 <div>
                   <label className="block text-sm text-muted mb-1">
-                    Headline <span className="text-gray-600">(e.g., &quot;The Queen of Scat vs. The Chairman of Swing&quot;)</span>
+                    Headline <span className="text-gray-600">(e.g., &quot;APT29 vs Lazarus Group -- Nation-State Showdown&quot;)</span>
                   </label>
                   <input
                     type="text"
@@ -205,7 +205,7 @@ export function MatchupPreviewEditor({ tournament, artists, existingPreviews }: 
                     value={funFact}
                     onChange={(e) => setFunFact(e.target.value)}
                     className="w-full bg-surface-hover border border-accent/30 rounded-lg px-3 py-2 text-foreground focus:outline-none focus:border-accent"
-                    placeholder="e.g., Ella recorded over 200 albums"
+                    placeholder="e.g., APT29 has been active since at least 2008"
                   />
                 </div>
                 <div className="flex gap-3">

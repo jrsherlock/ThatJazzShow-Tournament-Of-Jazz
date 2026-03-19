@@ -2,11 +2,11 @@
 
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import type { Artist, Tournament, MasterBracket, Region } from '@/lib/types';
+import type { ThreatActor, Tournament, MasterBracket, Region } from '@/lib/types';
 import { REGIONS, REGION_LABELS, ROUND_NAMES } from '@/lib/constants';
 import {
   matchupKey,
-  getMatchupArtists,
+  getMatchupActors,
   matchupsInRound,
   getRegionForMatchup,
   cascadePicks,
@@ -14,11 +14,11 @@ import {
 
 interface Props {
   tournament: Tournament;
-  artists: Artist[];
+  actors: ThreatActor[];
   existingBracket: MasterBracket | null;
 }
 
-export function MasterBracketEditor({ tournament, artists, existingBracket }: Props) {
+export function MasterBracketEditor({ tournament, actors, existingBracket }: Props) {
   const router = useRouter();
   const [picks, setPicks] = useState<Record<string, { winnerId: string }>>(
     existingBracket?.picks ?? {}
@@ -66,7 +66,7 @@ export function MasterBracketEditor({ tournament, artists, existingBracket }: Pr
 
   function renderMatchup(round: number, idx: number) {
     const key = matchupKey(round, idx);
-    const [artistA, artistB] = getMatchupArtists(round, idx, picks, artists);
+    const [actorA, actorB] = getMatchupActors(round, idx, picks, actors);
     const currentPick = picks[key]?.winnerId;
 
     return (
@@ -79,36 +79,36 @@ export function MasterBracketEditor({ tournament, artists, existingBracket }: Pr
         </div>
         <div className="space-y-2">
           <button
-            onClick={() => artistA && handlePick(round, idx, artistA.id)}
-            disabled={!artistA}
+            onClick={() => actorA && handlePick(round, idx, actorA.id)}
+            disabled={!actorA}
             className={`w-full text-left px-3 py-2 rounded transition-colors ${
-              currentPick === artistA?.id
+              currentPick === actorA?.id
                 ? 'bg-accent/20 border border-accent text-accent'
-                : artistA
+                : actorA
                 ? 'bg-background border border-transparent hover:border-accent/40 text-foreground'
                 : 'bg-background border border-transparent text-gray-600 cursor-not-allowed'
             }`}
           >
             <span className="text-xs text-dim mr-2">
-              {artistA ? `#${artistA.seed}` : ''}
+              {actorA ? `#${actorA.seed}` : ''}
             </span>
-            {artistA?.name ?? 'TBD'}
+            {actorA?.name ?? 'TBD'}
           </button>
           <button
-            onClick={() => artistB && handlePick(round, idx, artistB.id)}
-            disabled={!artistB}
+            onClick={() => actorB && handlePick(round, idx, actorB.id)}
+            disabled={!actorB}
             className={`w-full text-left px-3 py-2 rounded transition-colors ${
-              currentPick === artistB?.id
+              currentPick === actorB?.id
                 ? 'bg-accent/20 border border-accent text-accent'
-                : artistB
+                : actorB
                 ? 'bg-background border border-transparent hover:border-accent/40 text-foreground'
                 : 'bg-background border border-transparent text-gray-600 cursor-not-allowed'
             }`}
           >
             <span className="text-xs text-dim mr-2">
-              {artistB ? `#${artistB.seed}` : ''}
+              {actorB ? `#${actorB.seed}` : ''}
             </span>
-            {artistB?.name ?? 'TBD'}
+            {actorB?.name ?? 'TBD'}
           </button>
         </div>
       </div>
@@ -120,7 +120,7 @@ export function MasterBracketEditor({ tournament, artists, existingBracket }: Pr
   const matchupIndices = Array.from({ length: totalMatchups }, (_, i) => i).filter(
     (idx) => {
       if (activeRegion === 'all') return true;
-      if (activeRound >= 5) return true; // Final Four+ is cross-region
+      if (activeRound >= 4) return true; // Final Four+ is cross-region
       const region = getRegionForMatchup(activeRound, idx);
       return region === activeRegion;
     }
@@ -132,7 +132,7 @@ export function MasterBracketEditor({ tournament, artists, existingBracket }: Pr
       <div className="flex items-center justify-between mb-6 p-4 bg-surface-hover rounded-lg border border-accent/20">
         <div>
           <span className="text-muted">Picks Made: </span>
-          <span className="text-accent font-bold">{pickCount} / 63</span>
+          <span className="text-accent font-bold">{pickCount} / 31</span>
         </div>
         <button
           onClick={saveBracket}
@@ -145,7 +145,7 @@ export function MasterBracketEditor({ tournament, artists, existingBracket }: Pr
 
       {/* Round Tabs */}
       <div className="flex gap-2 mb-4 flex-wrap">
-        {[1, 2, 3, 4, 5, 6].map((round) => {
+        {[1, 2, 3, 4, 5].map((round) => {
           const roundPicks = Array.from(
             { length: matchupsInRound(round) },
             (_, i) => picks[matchupKey(round, i)]
@@ -168,7 +168,7 @@ export function MasterBracketEditor({ tournament, artists, existingBracket }: Pr
       </div>
 
       {/* Region Filter (for rounds 1-4) */}
-      {activeRound <= 4 && (
+      {activeRound <= 3 && (
         <div className="flex gap-2 mb-6 flex-wrap">
           <button
             onClick={() => setActiveRegion('all')}

@@ -1,5 +1,5 @@
 import { createServerClient } from '@/lib/supabase';
-import type { Artist, Tournament, MatchupPreview } from '@/lib/types';
+import type { ThreatActor, Tournament, MatchupPreview } from '@/lib/types';
 import { MatchupPreviewEditor } from '@/components/admin/MatchupPreviewEditor';
 
 export default async function MatchupPreviewsPage() {
@@ -21,8 +21,8 @@ export default async function MatchupPreviewsPage() {
     );
   }
 
-  const { data: artists } = await supabase
-    .from('artists')
+  const { data: actors } = await supabase
+    .from('threat_actors')
     .select('*')
     .order('region')
     .order('seed');
@@ -40,7 +40,7 @@ export default async function MatchupPreviewsPage() {
       </p>
       <MatchupPreviewEditor
         tournament={tournament as Tournament}
-        artists={(artists ?? []) as Artist[]}
+        actors={(actors ?? []) as ThreatActor[]}
         existingPreviews={(previews ?? []) as MatchupPreview[]}
       />
     </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import type { Artist, Region, Pick } from '@/lib/types';
+import type { ThreatActor, Region, Pick } from '@/lib/types';
 import {
   REGIONS,
   REGION_LABELS,
@@ -11,116 +11,101 @@ import {
 import {
   matchupKey,
   getRegionRound1Matchups,
-  getMatchupArtists,
+  getMatchupActors,
 } from '@/lib/bracket-utils';
 import { Matchup } from '@/components/bracket/Matchup';
 
 interface MobileRoundFlowProps {
-  artists: Artist[];
+  actors: ThreatActor[];
   picks: Record<string, Pick>;
   onPickWinner: (matchupKey: string, winnerId: string) => void;
   onOpenPreview: (matchupKey: string) => void;
-  onOpenArtistBio?: (artist: Artist, matchupKey: string) => void;
+  onOpenActorBio?: (actor: ThreatActor, matchupKey: string) => void;
   className?: string;
 }
 
 type TabId = Region | 'finalfour';
 
 const TABS: { id: TabId; label: string }[] = [
-  { id: 'vocalists', label: 'Vocalists' },
-  { id: 'bandleaders', label: 'Band Leaders' },
-  { id: 'composers', label: 'Composers' },
-  { id: 'soloists', label: 'Soloists' },
+  { id: 'state_superpowers', label: 'State Powers' },
+  { id: 'infrastructure_hunters', label: 'Infra Hunters' },
+  { id: 'cybercriminal_cartels', label: 'Cyber Cartels' },
+  { id: 'shadow_market', label: 'Shadow Mkt' },
   { id: 'finalfour', label: 'Final Four' },
 ];
 
 /**
- * Build all matchup data for a single region across rounds 1-4.
+ * Build all matchup data for a single region across rounds 1-3.
  */
 function useRegionMatchupData(
   region: Region,
-  artists: Artist[],
+  actors: ThreatActor[],
   picks: Record<string, Pick>
 ) {
   const regionIndex = REGIONS.indexOf(region);
 
   return useMemo(() => {
-    // Round 1: 8 matchups
-    const round1 = getRegionRound1Matchups(artists, region);
+    // Round 1: 4 matchups
+    const round1 = getRegionRound1Matchups(actors, region);
 
-    // Round 2: 4 matchups
-    const round2 = Array.from({ length: 4 }, (_, i) => {
-      const globalIndex = regionIndex * 4 + i;
-      const key = matchupKey(2, globalIndex);
-      const [artistA, artistB] = getMatchupArtists(2, globalIndex, picks, artists);
-      return { key, artistA, artistB };
-    });
-
-    // Round 3 (Sweet 16): 2 matchups
-    const round3 = Array.from({ length: 2 }, (_, i) => {
+    // Round 2: 2 matchups
+    const round2 = Array.from({ length: 2 }, (_, i) => {
       const globalIndex = regionIndex * 2 + i;
-      const key = matchupKey(3, globalIndex);
-      const [artistA, artistB] = getMatchupArtists(3, globalIndex, picks, artists);
-      return { key, artistA, artistB };
+      const key = matchupKey(2, globalIndex);
+      const [actorA, actorB] = getMatchupActors(2, globalIndex, picks, actors);
+      return { key, actorA, actorB };
     });
 
-    // Round 4 (Elite 8): 1 matchup
-    const elite8GlobalIndex = regionIndex;
-    const elite8Key = matchupKey(4, elite8GlobalIndex);
-    const [elite8A, elite8B] = getMatchupArtists(
-      4,
-      elite8GlobalIndex,
-      picks,
-      artists
-    );
-    const round4 = [{ key: elite8Key, artistA: elite8A, artistB: elite8B }];
+    // Round 3 (Region Final): 1 matchup
+    const regionFinalKey = matchupKey(3, regionIndex);
+    const [regionFinalA, regionFinalB] = getMatchupActors(3, regionIndex, picks, actors);
+    const round3 = [{ key: regionFinalKey, actorA: regionFinalA, actorB: regionFinalB }];
 
     return [
       { round: 1, name: ROUND_NAMES[1], matchups: round1 },
       { round: 2, name: ROUND_NAMES[2], matchups: round2 },
       { round: 3, name: ROUND_NAMES[3], matchups: round3 },
-      { round: 4, name: ROUND_NAMES[4], matchups: round4 },
     ];
-  }, [region, regionIndex, artists, picks]);
+  }, [region, regionIndex, actors, picks]);
 }
 
 /**
  * Build Final Four + Championship matchup data.
  */
 function useFinalFourData(
-  artists: Artist[],
+  actors: ThreatActor[],
   picks: Record<string, Pick>
 ) {
   return useMemo(() => {
-    // Final Four: round 5, matchups 0 and 1
-    const ff0Key = matchupKey(5, 0);
-    const [ff0A, ff0B] = getMatchupArtists(5, 0, picks, artists);
+    // Final Four: round 4, matchups 0 and 1
+    const ff0Key = matchupKey(4, 0);
+    const [ff0A, ff0B] = getMatchupActors(4, 0, picks, actors);
 
-    const ff1Key = matchupKey(5, 1);
-    const [ff1A, ff1B] = getMatchupArtists(5, 1, picks, artists);
+    const ff1Key = matchupKey(4, 1);
+    const [ff1A, ff1B] = getMatchupActors(4, 1, picks, actors);
 
-    // Championship: round 6, matchup 0
-    const champKey = matchupKey(6, 0);
-    const [champA, champB] = getMatchupArtists(6, 0, picks, artists);
+    // Championship: round 5, matchup 0
+    const champKey = matchupKey(5, 0);
+    const [champA, champB] = getMatchupActors(5, 0, picks, actors);
 
     return [
+      {
+        round: 4,
+        name: ROUND_NAMES[4],
+        matchups: [
+          { key: ff0Key, actorA: ff0A, actorB: ff0B },
+          { key: ff1Key, actorA: ff1A, actorB: ff1B },
+        ],
+      },
       {
         round: 5,
         name: ROUND_NAMES[5],
         matchups: [
-          { key: ff0Key, artistA: ff0A, artistB: ff0B },
-          { key: ff1Key, artistA: ff1A, artistB: ff1B },
-        ],
-      },
-      {
-        round: 6,
-        name: ROUND_NAMES[6],
-        matchups: [
-          { key: champKey, artistA: champA, artistB: champB },
+          { key: champKey, actorA: champA, actorB: champB },
         ],
       },
     ];
-  }, [artists, picks]);
+  }, [actors, picks]);
 }
 
 /**
@@ -128,20 +113,20 @@ function useFinalFourData(
  */
 function RegionTabContent({
   region,
-  artists,
+  actors,
   picks,
   onPickWinner,
   onOpenPreview,
-  onOpenArtistBio,
+  onOpenActorBio,
 }: {
   region: Region;
-  artists: Artist[];
+  actors: ThreatActor[];
   picks: Record<string, Pick>;
   onPickWinner: (matchupKey: string, winnerId: string) => void;
   onOpenPreview: (matchupKey: string) => void;
-  onOpenArtistBio?: (artist: Artist, matchupKey: string) => void;
+  onOpenActorBio?: (actor: ThreatActor, matchupKey: string) => void;
 }) {
-  const roundsData = useRegionMatchupData(region, artists, picks);
+  const roundsData = useRegionMatchupData(region, actors, picks);
   const colors = REGION_COLORS[region];
 
   return (
@@ -154,17 +139,17 @@ function RegionTabContent({
               className="h-[1px] flex-1"
               style={{
                 background:
-                  `linear-gradient(to right, ${colors.primary}4D, transparent)`,
+                  `linear-gradient(to right, rgba(52, 177, 228, 0.2), transparent)`,
               }}
             />
-            <h3 className="text-xs uppercase tracking-widest text-accent font-semibold whitespace-nowrap">
+            <h3 className="round-label inline-block text-[10px] uppercase tracking-widest text-accent-light/60 font-mono px-3 py-1 rounded whitespace-nowrap">
               {name}
             </h3>
             <div
               className="h-[1px] flex-1"
               style={{
                 background:
-                  `linear-gradient(to left, ${colors.primary}4D, transparent)`,
+                  `linear-gradient(to left, rgba(52, 177, 228, 0.2), transparent)`,
               }}
             />
           </div>
@@ -175,13 +160,13 @@ function RegionTabContent({
               <Matchup
                 key={m.key}
                 matchupKey={m.key}
-                artistA={m.artistA}
-                artistB={m.artistB}
+                actorA={m.actorA}
+                actorB={m.actorB}
                 winnerId={picks[m.key]?.winnerId ?? null}
                 commentary={picks[m.key]?.commentary}
                 onPickWinner={onPickWinner}
                 onOpenPreview={onOpenPreview}
-                onOpenArtistBio={onOpenArtistBio}
+                onOpenActorBio={onOpenActorBio}
                 round={round}
                 className="w-full"
               />
@@ -197,19 +182,19 @@ function RegionTabContent({
  * Final Four tab content: renders Final Four (round 5) + Championship (round 6).
  */
 function FinalFourTabContent({
-  artists,
+  actors,
   picks,
   onPickWinner,
   onOpenPreview,
-  onOpenArtistBio,
+  onOpenActorBio,
 }: {
-  artists: Artist[];
+  actors: ThreatActor[];
   picks: Record<string, Pick>;
   onPickWinner: (matchupKey: string, winnerId: string) => void;
   onOpenPreview: (matchupKey: string) => void;
-  onOpenArtistBio?: (artist: Artist, matchupKey: string) => void;
+  onOpenActorBio?: (actor: ThreatActor, matchupKey: string) => void;
 }) {
-  const roundsData = useFinalFourData(artists, picks);
+  const roundsData = useFinalFourData(actors, picks);
 
   return (
     <div className="space-y-6">
@@ -221,17 +206,17 @@ function FinalFourTabContent({
               className="h-[1px] flex-1"
               style={{
                 background:
-                  'linear-gradient(to right, color-mix(in srgb, var(--accent) 30%, transparent), transparent)',
+                  'linear-gradient(to right, rgba(52, 177, 228, 0.2), transparent)',
               }}
             />
-            <h3 className="text-xs uppercase tracking-widest text-accent font-semibold whitespace-nowrap">
+            <h3 className="round-label inline-block text-[10px] uppercase tracking-widest text-accent-light/60 font-mono px-3 py-1 rounded whitespace-nowrap">
               {name}
             </h3>
             <div
               className="h-[1px] flex-1"
               style={{
                 background:
-                  'linear-gradient(to left, color-mix(in srgb, var(--accent) 30%, transparent), transparent)',
+                  'linear-gradient(to left, rgba(52, 177, 228, 0.2), transparent)',
               }}
             />
           </div>
@@ -242,13 +227,13 @@ function FinalFourTabContent({
               <Matchup
                 key={m.key}
                 matchupKey={m.key}
-                artistA={m.artistA}
-                artistB={m.artistB}
+                actorA={m.actorA}
+                actorB={m.actorB}
                 winnerId={picks[m.key]?.winnerId ?? null}
                 commentary={picks[m.key]?.commentary}
                 onPickWinner={onPickWinner}
                 onOpenPreview={onOpenPreview}
-                onOpenArtistBio={onOpenArtistBio}
+                onOpenActorBio={onOpenActorBio}
                 round={round}
                 className="w-full"
               />
@@ -261,40 +246,40 @@ function FinalFourTabContent({
 }
 
 export function MobileRoundFlow({
-  artists,
+  actors,
   picks,
   onPickWinner,
   onOpenPreview,
-  onOpenArtistBio,
+  onOpenActorBio,
   className = '',
 }: MobileRoundFlowProps) {
-  const [activeTab, setActiveTab] = useState<TabId>('vocalists');
+  const [activeTab, setActiveTab] = useState<TabId>('state_superpowers');
 
   return (
     <div className={`mobile-round-flow ${className}`}>
       {/* Tab bar */}
       <div
-        className="sticky top-0 z-10 overflow-x-auto scrollbar-hide"
-        style={{ backgroundColor: 'var(--background)' }}
+        className="sticky top-0 z-10 overflow-x-auto scrollbar-hide backdrop-blur-md"
+        style={{ background: 'rgba(5, 10, 18, 0.9)' }}
       >
-        <div className="flex min-w-max border-b border-subtle">
+        <div className="flex min-w-max" style={{ borderBottom: '1px solid rgba(52, 177, 228, 0.12)' }}>
           {TABS.map((tab) => {
             const isActive = activeTab === tab.id;
-            const regionColor = tab.id !== 'finalfour' ? REGION_COLORS[tab.id as Region]?.primary : undefined;
+            const regionColor = tab.id !== 'finalfour' ? REGION_COLORS[tab.id as Region]?.light : undefined;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`
-                  px-4 py-3 text-sm font-medium whitespace-nowrap
+                  px-4 py-3 text-xs font-mono uppercase tracking-widest whitespace-nowrap
                   transition-colors duration-200 relative
                   ${
                     isActive
                       ? ''
-                      : 'text-dim hover:text-foreground'
+                      : 'text-accent-light/30 hover:text-accent-light/60'
                   }
                 `}
-                style={{ color: isActive ? (regionColor ?? 'var(--color-accent)') : undefined }}
+                style={{ color: isActive ? (regionColor ?? 'var(--color-accent-light)') : undefined }}
                 aria-selected={isActive}
                 role="tab"
               >
@@ -303,7 +288,10 @@ export function MobileRoundFlow({
                 {isActive && (
                   <span
                     className="absolute bottom-0 left-0 right-0 h-[2px]"
-                    style={{ backgroundColor: regionColor ?? 'var(--color-accent)' }}
+                    style={{
+                      backgroundColor: regionColor ?? 'var(--color-accent-light)',
+                      boxShadow: `0 0 6px ${regionColor ?? 'rgba(52, 177, 228, 0.4)'}`,
+                    }}
                   />
                 )}
               </button>
@@ -316,20 +304,20 @@ export function MobileRoundFlow({
       <div className="pt-4 px-2">
         {activeTab === 'finalfour' ? (
           <FinalFourTabContent
-            artists={artists}
+            actors={actors}
             picks={picks}
             onPickWinner={onPickWinner}
             onOpenPreview={onOpenPreview}
-            onOpenArtistBio={onOpenArtistBio}
+            onOpenActorBio={onOpenActorBio}
           />
         ) : (
           <RegionTabContent
             region={activeTab}
-            artists={artists}
+            actors={actors}
             picks={picks}
             onPickWinner={onPickWinner}
             onOpenPreview={onOpenPreview}
-            onOpenArtistBio={onOpenArtistBio}
+            onOpenActorBio={onOpenActorBio}
           />
         )}
       </div>

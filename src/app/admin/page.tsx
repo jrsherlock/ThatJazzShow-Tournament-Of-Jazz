@@ -11,14 +11,14 @@ export default async function AdminDashboardPage() {
   const supabase = createServerClient();
 
   // Fetch all stats in parallel
-  const [tournamentRes, artistRes, submissionRes] = await Promise.all([
+  const [tournamentRes, actorRes, submissionRes] = await Promise.all([
     supabase.from('tournament').select('id, name, status'),
-    supabase.from('artists').select('id', { count: 'exact', head: true }),
+    supabase.from('threat_actors').select('id', { count: 'exact', head: true }),
     supabase.from('submissions').select('id', { count: 'exact', head: true }),
   ]);
 
   const tournaments = tournamentRes.data ?? [];
-  const artistCount = artistRes.count ?? 0;
+  const actorCount = actorRes.count ?? 0;
   const submissionCount = submissionRes.count ?? 0;
 
   // Determine active tournament info
@@ -44,9 +44,9 @@ export default async function AdminDashboardPage() {
       detail: activeTournament ? `ID: ${activeTournament.id.slice(0, 8)}...` : undefined,
     },
     {
-      label: 'Artists',
-      value: artistCount,
-      detail: `${Math.floor(artistCount / 4)} per region (avg)`,
+      label: 'Threat Actors',
+      value: actorCount,
+      detail: `${Math.floor(actorCount / 4)} per region (avg)`,
     },
     {
       label: 'Submissions',
@@ -59,7 +59,7 @@ export default async function AdminDashboardPage() {
     <div>
       <h1 className="text-2xl font-bold text-accent mb-1">Dashboard</h1>
       <p className="text-dim text-sm mb-8">
-        Overview of your Tournament of Jazz bracket.
+        Overview of your Tournament of Threats bracket.
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">

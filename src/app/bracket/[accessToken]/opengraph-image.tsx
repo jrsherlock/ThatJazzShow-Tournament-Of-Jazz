@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 import { createServerClient } from '@/lib/supabase';
 import { scoreSubmission } from '@/lib/scoring';
-import type { Artist, Submission, MasterBracket } from '@/lib/types';
+import type { ThreatActor, Submission, MasterBracket } from '@/lib/types';
 import { matchupKey } from '@/lib/bracket-utils';
 
 export const size = { width: 1200, height: 630 };
@@ -33,7 +33,7 @@ export default async function OGImage({
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: '#0A0A0A',
-            color: '#0B3D91',
+            color: '#DC2626',
             fontSize: 48,
             fontFamily: 'serif',
           }}
@@ -47,9 +47,9 @@ export default async function OGImage({
 
   const typedSubmission = submission as Submission;
 
-  // Fetch artists and master bracket in parallel
-  const [artistsResult, masterBracketResult] = await Promise.all([
-    supabase.from('artists').select('*').order('seed', { ascending: true }),
+  // Fetch threat actors and master bracket in parallel
+  const [actorsResult, masterBracketResult] = await Promise.all([
+    supabase.from('threat_actors').select('*').order('seed', { ascending: true }),
     supabase
       .from('master_bracket')
       .select('*')
@@ -57,10 +57,10 @@ export default async function OGImage({
       .single(),
   ]);
 
-  const artists = (artistsResult.data as Artist[]) ?? [];
+  const actors = (actorsResult.data as ThreatActor[]) ?? [];
   const masterBracket = masterBracketResult.data as MasterBracket | null;
 
-  // Resolve Final Four artists (the 4 artists competing in round 5)
+  // Resolve Final Four actors (the 4 actors competing in round 5)
   const finalFourNames: string[] = [];
   for (let i = 0; i < 2; i++) {
     // Each round 5 matchup has two feeder matchups from round 4
@@ -70,19 +70,19 @@ export default async function OGImage({
     const pickB = typedSubmission.picks[parentBKey];
 
     if (pickA) {
-      const artist = artists.find((a) => a.id === pickA.winnerId);
-      if (artist) finalFourNames.push(artist.name);
+      const actor = actors.find((a) => a.id === pickA.winnerId);
+      if (actor) finalFourNames.push(actor.name);
     }
     if (pickB) {
-      const artist = artists.find((a) => a.id === pickB.winnerId);
-      if (artist) finalFourNames.push(artist.name);
+      const actor = actors.find((a) => a.id === pickB.winnerId);
+      if (actor) finalFourNames.push(actor.name);
     }
   }
 
   // Resolve champion
   const championPick = typedSubmission.picks[matchupKey(6, 0)];
   const champion = championPick
-    ? artists.find((a) => a.id === championPick.winnerId)
+    ? actors.find((a) => a.id === championPick.winnerId)
     : null;
   const championName = champion?.name ?? 'TBD';
 
@@ -116,7 +116,7 @@ export default async function OGImage({
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            border: '2px solid #0B3D91',
+            border: '2px solid #DC2626',
             borderRadius: '12px',
             padding: '40px 50px',
             position: 'relative',
@@ -135,12 +135,12 @@ export default async function OGImage({
               style={{
                 fontSize: 36,
                 fontWeight: 700,
-                color: '#0B3D91',
+                color: '#DC2626',
                 fontFamily: 'serif',
                 letterSpacing: '1px',
               }}
             >
-              Tournament of Jazz
+              Tournament of Threats
             </div>
             <div
               style={{
@@ -151,7 +151,7 @@ export default async function OGImage({
                 textTransform: 'uppercase',
               }}
             >
-              That Jazz Show on KRUI 89.7 FM
+              The Ultimate Cybersecurity Bracket
             </div>
           </div>
 
@@ -160,7 +160,7 @@ export default async function OGImage({
             style={{
               width: '100%',
               height: '1px',
-              background: 'linear-gradient(90deg, transparent, #0B3D91, transparent)',
+              background: 'linear-gradient(90deg, transparent, #DC2626, transparent)',
               marginBottom: '20px',
             }}
           />
@@ -197,12 +197,12 @@ export default async function OGImage({
               <div
                 style={{
                   fontSize: 20,
-                  color: '#0B3D91',
+                  color: '#DC2626',
                   fontWeight: 600,
-                  backgroundColor: 'rgba(11, 61, 145, 0.1)',
+                  backgroundColor: 'rgba(220, 38, 38, 0.1)',
                   padding: '6px 24px',
                   borderRadius: '8px',
-                  border: '1px solid rgba(11, 61, 145, 0.3)',
+                  border: '1px solid rgba(220, 38, 38, 0.3)',
                 }}
               >
                 {scoreText}
@@ -288,7 +288,7 @@ export default async function OGImage({
                     alignItems: 'center',
                     justifyContent: 'center',
                     backgroundColor: '#1A1A1A',
-                    border: '1px solid rgba(11, 61, 145, 0.3)',
+                    border: '1px solid rgba(220, 38, 38, 0.3)',
                     borderRadius: '8px',
                     padding: '10px 20px',
                     minWidth: '200px',
@@ -316,7 +316,7 @@ export default async function OGImage({
                       alignItems: 'center',
                       justifyContent: 'center',
                       backgroundColor: '#1A1A1A',
-                      border: '1px solid rgba(11, 61, 145, 0.15)',
+                      border: '1px solid rgba(220, 38, 38, 0.15)',
                       borderRadius: '8px',
                       padding: '10px 20px',
                       minWidth: '200px',
@@ -347,7 +347,7 @@ export default async function OGImage({
               right: '50px',
               height: '1px',
               background:
-                'linear-gradient(90deg, transparent, #0B3D91, transparent)',
+                'linear-gradient(90deg, transparent, #DC2626, transparent)',
             }}
           />
         </div>

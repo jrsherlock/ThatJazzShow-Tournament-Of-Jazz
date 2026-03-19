@@ -29,15 +29,15 @@ export async function GET() {
     );
   }
 
-  // Fetch all artists
-  const { data: artists, error: artistsError } = await supabase
-    .from('artists')
+  // Fetch all threat actors
+  const { data: actors, error: actorsError } = await supabase
+    .from('threat_actors')
     .select('*')
     .order('seed', { ascending: true });
 
-  if (artistsError) {
+  if (actorsError) {
     return NextResponse.json(
-      { error: 'Failed to fetch artists' },
+      { error: 'Failed to fetch threat actors' },
       { status: 500 }
     );
   }
@@ -57,7 +57,7 @@ export async function GET() {
 
   return NextResponse.json({
     tournament,
-    artists: artists ?? [],
+    actors: actors ?? [],
     previews: previews ?? [],
   });
 }

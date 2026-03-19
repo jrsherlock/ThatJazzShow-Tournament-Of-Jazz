@@ -19,12 +19,11 @@ export interface LeaderboardTableProps {
 }
 
 const ROUND_SHORT_LABELS: Record<number, string> = {
-  1: 'R1',
-  2: 'R2',
-  3: 'S16',
-  4: 'E8',
-  5: 'FF',
-  6: 'Champ',
+  1: 'R32',
+  2: 'S16',
+  3: 'E8',
+  4: 'FF',
+  5: 'Champ',
 };
 
 function RankBadge({ rank }: { rank: number }) {
@@ -123,7 +122,7 @@ export default function LeaderboardTable({
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-accent text-right">
                   Score
                 </th>
-                {[1, 2, 3, 4, 5, 6].map((round) => (
+                {[1, 2, 3, 4, 5].map((round) => (
                   <th
                     key={round}
                     className={`px-3 py-3 text-xs font-semibold uppercase tracking-wider text-right whitespace-nowrap ${
@@ -175,7 +174,7 @@ export default function LeaderboardTable({
                         {entry.score.total}
                       </span>
                     </td>
-                    {[1, 2, 3, 4, 5, 6].map((round) => (
+                    {[1, 2, 3, 4, 5].map((round) => (
                       <td
                         key={round}
                         className={`px-3 py-3 text-right tabular-nums text-sm ${

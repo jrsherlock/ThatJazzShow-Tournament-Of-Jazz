@@ -7,7 +7,7 @@ import LeaderboardTable from '@/components/leaderboard/LeaderboardTable';
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: 'Leaderboard | Tournament of Jazz',
+  title: 'Leaderboard | Tournament of Threats',
 };
 
 export default async function LeaderboardPage() {

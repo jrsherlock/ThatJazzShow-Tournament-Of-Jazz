@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import type { Artist, Region, Pick } from '@/lib/types';
+import type { ThreatActor, Region, Pick } from '@/lib/types';
 import {
   REGION_LABELS,
   REGION_SUBTITLES,
@@ -12,77 +12,68 @@ import {
 import {
   matchupKey,
   getRegionRound1Matchups,
-  getMatchupArtists,
+  getMatchupActors,
 } from '@/lib/bracket-utils';
 import { Matchup } from '@/components/bracket/Matchup';
 
 interface RegionBracketProps {
   region: Region;
-  regionIndex: number; // 0-3 (vocalists=0, bandleaders=1, composers=2, soloists=3)
-  artists: Artist[];
+  regionIndex: number; // 0-3 (state_superpowers=0, infrastructure_hunters=1, cybercriminal_cartels=2, shadow_market=3)
+  actors: ThreatActor[];
   picks: Record<string, Pick>;
   onPickWinner: (matchupKey: string, winnerId: string) => void;
   onOpenPreview: (matchupKey: string) => void;
-  onOpenArtistBio?: (artist: Artist, matchupKey: string) => void;
+  onOpenActorBio?: (actor: ThreatActor, matchupKey: string) => void;
   className?: string;
 }
 
 /**
- * Build matchup data for rounds 2-4 within this region.
- * Round 2: 4 matchups at global indices regionIndex*4 .. regionIndex*4+3
- * Round 3 (Sweet 16): 2 matchups at regionIndex*2 .. regionIndex*2+1
- * Round 4 (Elite 8): 1 matchup at regionIndex
+ * Build matchup data for rounds 1-3 within this region.
+ * Round 1: 4 matchups (seeded pairings)
+ * Round 2: 2 matchups at global indices regionIndex*2 .. regionIndex*2+1
+ * Round 3 (Region Final): 1 matchup at regionIndex
  */
 function useRegionMatchups(
   regionIndex: number,
-  artists: Artist[],
+  actors: ThreatActor[],
   picks: Record<string, Pick>
 ) {
   return useMemo(() => {
-    // Round 1: 8 matchups
+    // Round 1: 4 matchups
     const region = REGIONS[regionIndex];
-    const round1 = getRegionRound1Matchups(artists, region);
+    const round1 = getRegionRound1Matchups(actors, region);
 
-    // Round 2: 4 matchups
-    const round2 = Array.from({ length: 4 }, (_, i) => {
-      const globalIndex = regionIndex * 4 + i;
-      const key = matchupKey(2, globalIndex);
-      const [artistA, artistB] = getMatchupArtists(2, globalIndex, picks, artists);
-      return { key, artistA, artistB };
-    });
-
-    // Round 3 (Sweet 16): 2 matchups
-    const round3 = Array.from({ length: 2 }, (_, i) => {
+    // Round 2: 2 matchups
+    const round2 = Array.from({ length: 2 }, (_, i) => {
       const globalIndex = regionIndex * 2 + i;
-      const key = matchupKey(3, globalIndex);
-      const [artistA, artistB] = getMatchupArtists(3, globalIndex, picks, artists);
-      return { key, artistA, artistB };
+      const key = matchupKey(2, globalIndex);
+      const [actorA, actorB] = getMatchupActors(2, globalIndex, picks, actors);
+      return { key, actorA, actorB };
     });
 
-    // Round 4 (Elite 8): 1 matchup
-    const elite8GlobalIndex = regionIndex;
-    const elite8Key = matchupKey(4, elite8GlobalIndex);
-    const [elite8A, elite8B] = getMatchupArtists(4, elite8GlobalIndex, picks, artists);
-    const round4 = [{ key: elite8Key, artistA: elite8A, artistB: elite8B }];
+    // Round 3 (Region Final): 1 matchup
+    const regionFinalKey = matchupKey(3, regionIndex);
+    const [regionFinalA, regionFinalB] = getMatchupActors(3, regionIndex, picks, actors);
+    const round3 = [{ key: regionFinalKey, actorA: regionFinalA, actorB: regionFinalB }];
 
-    return { round1, round2, round3, round4 };
-  }, [regionIndex, artists, picks]);
+    return { round1, round2, round3 };
+  }, [regionIndex, actors, picks]);
 }
 
 export function RegionBracket({
   region,
   regionIndex,
-  artists,
+  actors,
   picks,
   onPickWinner,
   onOpenPreview,
-  onOpenArtistBio,
+  onOpenActorBio,
   className = '',
 }: RegionBracketProps) {
   const colors = REGION_COLORS[region];
-  const { round1, round2, round3, round4 } = useRegionMatchups(
+  const { round1, round2, round3 } = useRegionMatchups(
     regionIndex,
-    artists,
+    actors,
     picks
   );
 
@@ -90,22 +81,21 @@ export function RegionBracket({
     { data: round1, round: 1, name: ROUND_NAMES[1] },
     { data: round2, round: 2, name: ROUND_NAMES[2] },
     { data: round3, round: 3, name: ROUND_NAMES[3] },
-    { data: round4, round: 4, name: ROUND_NAMES[4] },
   ];
 
   return (
     <div className={`region-bracket ${className}`} style={{ '--region-color': colors.primary } as React.CSSProperties}>
       {/* Region Header */}
-      <div className="mb-6 text-center">
+      <div className="region-header-badge mb-6 text-center py-3 px-4 rounded-lg mx-auto max-w-xs">
         <h2
-          className="text-2xl md:text-3xl font-bold font-display"
-          style={{ color: colors.primary }}
+          className="text-2xl md:text-3xl font-bold font-display tracking-wider uppercase"
+          style={{ color: colors.light }}
         >
           {REGION_LABELS[region]}
         </h2>
         <p
-          className="text-sm md:text-base mt-1 italic font-display"
-          style={{ color: colors.light }}
+          className="text-xs md:text-sm mt-1 font-mono tracking-widest uppercase"
+          style={{ color: colors.light, opacity: 0.5 }}
         >
           {REGION_SUBTITLES[region]}
         </p>
@@ -126,7 +116,7 @@ export function RegionBracket({
           >
             {/* Round label */}
             <div className="text-center mb-3">
-              <span className="text-xs uppercase tracking-wider text-dim font-medium">
+              <span className="round-label inline-block text-[10px] uppercase tracking-widest text-accent-light/60 font-mono px-3 py-1 rounded">
                 {name}
               </span>
             </div>
@@ -142,13 +132,13 @@ export function RegionBracket({
                   <div className="flex-1 min-w-0">
                     <Matchup
                       matchupKey={m.key}
-                      artistA={m.artistA}
-                      artistB={m.artistB}
+                      actorA={m.actorA}
+                      actorB={m.actorB}
                       winnerId={picks[m.key]?.winnerId ?? null}
                       commentary={picks[m.key]?.commentary}
                       onPickWinner={onPickWinner}
                       onOpenPreview={onOpenPreview}
-                      onOpenArtistBio={onOpenArtistBio}
+                      onOpenActorBio={onOpenActorBio}
                       round={round}
                       className="w-full"
                     />
@@ -165,8 +155,6 @@ export function RegionBracket({
                         top: '50%',
                         width: '16px',
                         height: '1px',
-                        backgroundColor: colors.primary,
-                        opacity: 0.4,
                       }}
                     />
                   )}
@@ -183,8 +171,6 @@ export function RegionBracket({
                         bottom: matchupIdx % 2 === 1 ? '50%' : undefined,
                         width: '1px',
                         height: '50%',
-                        backgroundColor: colors.primary,
-                        opacity: 0.4,
                         // For even matchups draw down, for odd draw up
                         ...(matchupIdx % 2 === 0
                           ? { borderTop: 'none' }
@@ -203,7 +189,7 @@ export function RegionBracket({
       <style jsx>{`
         .region-bracket-grid {
           display: grid;
-          grid-template-columns: repeat(4, minmax(160px, 1fr));
+          grid-template-columns: repeat(3, minmax(160px, 1fr));
           gap: 16px;
           align-items: stretch;
           min-height: 600px;
@@ -224,10 +210,11 @@ export function RegionBracket({
           background: linear-gradient(
             to bottom,
             transparent 0%,
-            color-mix(in srgb, var(--region-color) 15%, transparent) 10%,
-            color-mix(in srgb, var(--region-color) 15%, transparent) 90%,
+            rgba(52, 177, 228, 0.2) 10%,
+            rgba(52, 177, 228, 0.2) 90%,
             transparent 100%
           );
+          box-shadow: 0 0 4px rgba(52, 177, 228, 0.1);
         }
 
         @media (max-width: 768px) {

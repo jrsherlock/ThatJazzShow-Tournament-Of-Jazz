@@ -39,7 +39,7 @@ export default function AdminLoginForm() {
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="w-full max-w-sm p-8 border border-accent/40 rounded-lg bg-surface-hover shadow-lg shadow-[#0B3D91]/5">
         <h1 className="text-2xl font-bold text-accent text-center mb-2 tracking-wide">
-          Tournament of Jazz
+          Tournament of Threats
         </h1>
         <p className="text-muted text-center text-sm mb-8">
           Admin Access

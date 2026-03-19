@@ -10,11 +10,11 @@ export async function POST(request: NextRequest) {
 
   const formData = await request.formData();
   const file = formData.get('file') as File | null;
-  const artistId = formData.get('artistId') as string | null;
+  const actorId = formData.get('actorId') as string | null;
 
-  if (!file || !artistId) {
+  if (!file || !actorId) {
     return NextResponse.json(
-      { error: 'file and artistId are required' },
+      { error: 'file and actorId are required' },
       { status: 400 }
     );
   }
@@ -38,19 +38,19 @@ export async function POST(request: NextRequest) {
 
   const supabase = createServerClient();
 
-  // Look up artist to get name for filename
-  const { data: artist, error: lookupErr } = await supabase
-    .from('artists')
+  // Look up threat actor to get name for filename
+  const { data: actor, error: lookupErr } = await supabase
+    .from('threat_actors')
     .select('name')
-    .eq('id', artistId)
+    .eq('id', actorId)
     .single();
 
-  if (lookupErr || !artist) {
-    return NextResponse.json({ error: 'Artist not found' }, { status: 404 });
+  if (lookupErr || !actor) {
+    return NextResponse.json({ error: 'Threat actor not found' }, { status: 404 });
   }
 
-  // Generate slug from artist name
-  const slug = artist.name
+  // Generate slug from actor name
+  const slug = actor.name
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
@@ -81,11 +81,11 @@ export async function POST(request: NextRequest) {
 
   const publicUrl = urlData.publicUrl;
 
-  // Update artist record
+  // Update threat actor record
   const { error: updateErr } = await supabase
-    .from('artists')
+    .from('threat_actors')
     .update({ photo_url: publicUrl })
-    .eq('id', artistId);
+    .eq('id', actorId);
 
   if (updateErr) {
     return NextResponse.json(
@@ -104,11 +104,11 @@ export async function DELETE(request: NextRequest) {
   }
 
   const { searchParams } = new URL(request.url);
-  const artistId = searchParams.get('artistId');
+  const actorId = searchParams.get('actorId');
 
-  if (!artistId) {
+  if (!actorId) {
     return NextResponse.json(
-      { error: 'artistId is required' },
+      { error: 'actorId is required' },
       { status: 400 }
     );
   }
@@ -117,9 +117,9 @@ export async function DELETE(request: NextRequest) {
 
   // Clear photo_url in the database
   const { error: updateErr } = await supabase
-    .from('artists')
+    .from('threat_actors')
     .update({ photo_url: null })
-    .eq('id', artistId);
+    .eq('id', actorId);
 
   if (updateErr) {
     return NextResponse.json(

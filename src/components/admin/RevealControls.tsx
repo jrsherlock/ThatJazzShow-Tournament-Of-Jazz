@@ -192,7 +192,7 @@ export default function RevealControls({ tournament, masterBracket }: RevealCont
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[1, 2, 3, 4, 5, 6].map((round) => {
+          {[1, 2, 3, 4, 5].map((round) => {
             const state = getRoundState(round);
             const roundName = ROUND_NAMES[round];
 

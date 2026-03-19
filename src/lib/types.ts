@@ -1,4 +1,4 @@
-export type Region = 'vocalists' | 'bandleaders' | 'composers' | 'soloists';
+export type Region = 'state_superpowers' | 'infrastructure_hunters' | 'cybercriminal_cartels' | 'shadow_market';
 
 export interface MediaLink {
   type: 'video' | 'audio';
@@ -7,17 +7,17 @@ export interface MediaLink {
   source: string;
 }
 
-export interface Artist {
+export interface ThreatActor {
   id: string;
   name: string;
   seed: number;
   region: Region;
   photo_url: string | null;
   bio: string | null;
-  instrument: string | null;
-  era: string | null;
-  featured_track_url: string | null;
-  featured_track_title: string | null;
+  affiliation: string | null;
+  country_flag: string | null;
+  intel_report_url: string | null;
+  notable_operations: string | null;
   media: MediaLink[] | null;
   created_at: string;
 }
@@ -69,9 +69,9 @@ export interface Submission {
 export interface Matchup {
   round: number;
   matchupIndex: number;
-  artistA: Artist | null;
-  artistB: Artist | null;
-  winner: Artist | null;
+  actorA: ThreatActor | null;
+  actorB: ThreatActor | null;
+  winner: ThreatActor | null;
   region?: Region;
 }
 

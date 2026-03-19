@@ -1,30 +1,30 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { Artist, Region, MediaLink } from '@/lib/types';
+import { ThreatActor, Region, MediaLink } from '@/lib/types';
 import { REGIONS, REGION_LABELS } from '@/lib/constants';
 
-interface ArtistFormData {
+interface ThreatActorFormData {
   name: string;
   seed: number | '';
   region: Region | '';
   bio: string;
-  instrument: string;
-  era: string;
-  featured_track_url: string;
-  featured_track_title: string;
+  affiliation: string;
+  country_flag: string;
+  intel_report_url: string;
+  notable_operations: string;
   media: MediaLink[];
 }
 
-const emptyForm: ArtistFormData = {
+const emptyForm: ThreatActorFormData = {
   name: '',
   seed: '',
   region: '',
   bio: '',
-  instrument: '',
-  era: '',
-  featured_track_url: '',
-  featured_track_title: '',
+  affiliation: '',
+  country_flag: '',
+  intel_report_url: '',
+  notable_operations: '',
   media: [],
 };
 
@@ -35,27 +35,27 @@ const emptyMediaLink: MediaLink = {
   source: '',
 };
 
-interface ArtistManagerProps {
-  initialArtists: Artist[];
+interface ThreatActorManagerProps {
+  initialActors: ThreatActor[];
 }
 
-export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
-  const [artists, setArtists] = useState<Artist[]>(initialArtists);
+export default function ThreatActorManager({ initialActors }: ThreatActorManagerProps) {
+  const [actors, setActors] = useState<ThreatActor[]>(initialActors);
   const [collapsedRegions, setCollapsedRegions] = useState<Record<string, boolean>>({});
-  const [editingArtist, setEditingArtist] = useState<Artist | null>(null);
+  const [editingActor, setEditingActor] = useState<ThreatActor | null>(null);
   const [addingToRegion, setAddingToRegion] = useState<Region | null>(null);
-  const [formData, setFormData] = useState<ArtistFormData>(emptyForm);
+  const [formData, setFormData] = useState<ThreatActorFormData>(emptyForm);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchArtists = useCallback(async () => {
+  const fetchActors = useCallback(async () => {
     try {
-      const res = await fetch('/api/admin/artists');
-      if (!res.ok) throw new Error('Failed to fetch artists');
+      const res = await fetch('/api/admin/threat-actors');
+      if (!res.ok) throw new Error('Failed to fetch threat actors');
       const data = await res.json();
-      setArtists(data);
+      setActors(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch artists');
+      setError(err instanceof Error ? err.message : 'Failed to fetch threat actors');
     }
   }, []);
 
@@ -63,35 +63,35 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
     setCollapsedRegions((prev) => ({ ...prev, [region]: !prev[region] }));
   };
 
-  const artistsByRegion = (region: Region) =>
-    artists.filter((a) => a.region === region).sort((a, b) => a.seed - b.seed);
+  const actorsByRegion = (region: Region) =>
+    actors.filter((a) => a.region === region).sort((a, b) => a.seed - b.seed);
 
   const startAdd = (region: Region) => {
-    setEditingArtist(null);
+    setEditingActor(null);
     setAddingToRegion(region);
     setFormData({ ...emptyForm, region });
     setError(null);
   };
 
-  const startEdit = (artist: Artist) => {
+  const startEdit = (actor: ThreatActor) => {
     setAddingToRegion(null);
-    setEditingArtist(artist);
+    setEditingActor(actor);
     setFormData({
-      name: artist.name,
-      seed: artist.seed,
-      region: artist.region,
-      bio: artist.bio || '',
-      instrument: artist.instrument || '',
-      era: artist.era || '',
-      featured_track_url: artist.featured_track_url || '',
-      featured_track_title: artist.featured_track_title || '',
-      media: artist.media || [],
+      name: actor.name,
+      seed: actor.seed,
+      region: actor.region,
+      bio: actor.bio || '',
+      affiliation: actor.affiliation || '',
+      country_flag: actor.country_flag || '',
+      intel_report_url: actor.intel_report_url || '',
+      notable_operations: actor.notable_operations || '',
+      media: actor.media || [],
     });
     setError(null);
   };
 
   const cancelForm = () => {
-    setEditingArtist(null);
+    setEditingActor(null);
     setAddingToRegion(null);
     setFormData(emptyForm);
     setError(null);
@@ -103,30 +103,30 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
     setError(null);
 
     try {
-      if (editingArtist) {
-        const res = await fetch('/api/admin/artists', {
+      if (editingActor) {
+        const res = await fetch('/api/admin/threat-actors', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: editingArtist.id, ...formData }),
+          body: JSON.stringify({ id: editingActor.id, ...formData }),
         });
         if (!res.ok) {
           const data = await res.json();
-          throw new Error(data.error || 'Failed to update artist');
+          throw new Error(data.error || 'Failed to update threat actor');
         }
       } else {
-        const res = await fetch('/api/admin/artists', {
+        const res = await fetch('/api/admin/threat-actors', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData),
         });
         if (!res.ok) {
           const data = await res.json();
-          throw new Error(data.error || 'Failed to create artist');
+          throw new Error(data.error || 'Failed to create threat actor');
         }
       }
 
       cancelForm();
-      await fetchArtists();
+      await fetchActors();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -134,21 +134,21 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
     }
   };
 
-  const handleDelete = async (artist: Artist) => {
-    if (!confirm(`Are you sure you want to delete "${artist.name}"?`)) return;
+  const handleDelete = async (actor: ThreatActor) => {
+    if (!confirm(`Are you sure you want to delete "${actor.name}"?`)) return;
 
     setLoading(true);
     setError(null);
 
     try {
-      const res = await fetch(`/api/admin/artists?id=${artist.id}`, {
+      const res = await fetch(`/api/admin/threat-actors?id=${actor.id}`, {
         method: 'DELETE',
       });
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || 'Failed to delete artist');
+        throw new Error(data.error || 'Failed to delete threat actor');
       }
-      await fetchArtists();
+      await fetchActors();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -156,22 +156,22 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
     }
   };
 
-  const updateField = (field: keyof ArtistFormData, value: string | number) => {
+  const updateField = (field: keyof ThreatActorFormData, value: string | number) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const [uploadingPhotoFor, setUploadingPhotoFor] = useState<string | null>(null);
 
-  const handlePhotoUpload = async (artistId: string, file: File) => {
-    setUploadingPhotoFor(artistId);
+  const handlePhotoUpload = async (actorId: string, file: File) => {
+    setUploadingPhotoFor(actorId);
     setError(null);
 
     try {
       const form = new FormData();
       form.append('file', file);
-      form.append('artistId', artistId);
+      form.append('actorId', actorId);
 
-      const res = await fetch('/api/admin/artists/photo', {
+      const res = await fetch('/api/admin/threat-actors/photo', {
         method: 'POST',
         body: form,
       });
@@ -181,7 +181,7 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
         throw new Error(data.error || 'Upload failed');
       }
 
-      await fetchArtists();
+      await fetchActors();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Photo upload failed');
     } finally {
@@ -189,13 +189,13 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
     }
   };
 
-  const handlePhotoRemove = async (artistId: string) => {
-    if (!confirm('Remove this artist\'s photo?')) return;
-    setUploadingPhotoFor(artistId);
+  const handlePhotoRemove = async (actorId: string) => {
+    if (!confirm('Remove this threat actor\'s photo?')) return;
+    setUploadingPhotoFor(actorId);
     setError(null);
 
     try {
-      const res = await fetch(`/api/admin/artists/photo?artistId=${artistId}`, {
+      const res = await fetch(`/api/admin/threat-actors/photo?actorId=${actorId}`, {
         method: 'DELETE',
       });
 
@@ -204,7 +204,7 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
         throw new Error(data.error || 'Failed to remove photo');
       }
 
-      await fetchArtists();
+      await fetchActors();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to remove photo');
     } finally {
@@ -212,16 +212,16 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
     }
   };
 
-  const isFormOpen = editingArtist !== null || addingToRegion !== null;
+  const isFormOpen = editingActor !== null || addingToRegion !== null;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-accent">Artist Management</h1>
+          <h1 className="text-3xl font-bold text-accent">Threat Actor Management</h1>
           <p className="text-muted mt-1">
-            Manage the 64 artists across all four regions of the bracket.
+            Manage the 64 threat actors across all four regions of the bracket.
           </p>
         </div>
 
@@ -242,7 +242,7 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
         {isFormOpen && (
           <div className="mb-8 p-6 bg-surface border border-accent/20 rounded-lg">
             <h2 className="text-xl font-semibold text-accent mb-4">
-              {editingArtist ? `Edit: ${editingArtist.name}` : 'Add New Artist'}
+              {editingActor ? `Edit: ${editingActor.name}` : 'Add New Threat Actor'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -257,7 +257,7 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
                     value={formData.name}
                     onChange={(e) => updateField('name', e.target.value)}
                     className="w-full px-3 py-2 bg-surface-hover border border-accent/20 rounded-md text-foreground placeholder-dim focus:outline-none focus:border-accent/60"
-                    placeholder="e.g. Ella Fitzgerald"
+                    placeholder="e.g. APT29 (Cozy Bear)"
                   />
                 </div>
 
@@ -302,59 +302,59 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Instrument */}
+                {/* Affiliation */}
                 <div>
                   <label className="block text-sm font-medium text-muted mb-1">
-                    Instrument
+                    Affiliation
                   </label>
                   <input
                     type="text"
-                    value={formData.instrument}
-                    onChange={(e) => updateField('instrument', e.target.value)}
+                    value={formData.affiliation}
+                    onChange={(e) => updateField('affiliation', e.target.value)}
                     className="w-full px-3 py-2 bg-surface-hover border border-accent/20 rounded-md text-foreground placeholder-dim focus:outline-none focus:border-accent/60"
-                    placeholder="e.g. Vocals, Trumpet, Piano"
+                    placeholder="e.g. Russia (SVR), PRC (MSS)"
                   />
                 </div>
 
-                {/* Era */}
+                {/* Country Flag */}
                 <div>
-                  <label className="block text-sm font-medium text-muted mb-1">Era</label>
+                  <label className="block text-sm font-medium text-muted mb-1">Country Flag</label>
                   <input
                     type="text"
-                    value={formData.era}
-                    onChange={(e) => updateField('era', e.target.value)}
+                    value={formData.country_flag}
+                    onChange={(e) => updateField('country_flag', e.target.value)}
                     className="w-full px-3 py-2 bg-surface-hover border border-accent/20 rounded-md text-foreground placeholder-dim focus:outline-none focus:border-accent/60"
-                    placeholder="e.g. 1930s-1960s"
+                    placeholder="e.g. flag emoji or country code"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Featured Track URL */}
+                {/* Intel Report URL */}
                 <div>
                   <label className="block text-sm font-medium text-muted mb-1">
-                    Featured Track URL
+                    Intel Report URL
                   </label>
                   <input
                     type="text"
-                    value={formData.featured_track_url}
-                    onChange={(e) => updateField('featured_track_url', e.target.value)}
+                    value={formData.intel_report_url}
+                    onChange={(e) => updateField('intel_report_url', e.target.value)}
                     className="w-full px-3 py-2 bg-surface-hover border border-accent/20 rounded-md text-foreground placeholder-dim focus:outline-none focus:border-accent/60"
                     placeholder="https://..."
                   />
                 </div>
 
-                {/* Featured Track Title */}
+                {/* Notable Operations */}
                 <div>
                   <label className="block text-sm font-medium text-muted mb-1">
-                    Featured Track Title
+                    Notable Operations
                   </label>
                   <input
                     type="text"
-                    value={formData.featured_track_title}
-                    onChange={(e) => updateField('featured_track_title', e.target.value)}
+                    value={formData.notable_operations}
+                    onChange={(e) => updateField('notable_operations', e.target.value)}
                     className="w-full px-3 py-2 bg-surface-hover border border-accent/20 rounded-md text-foreground placeholder-dim focus:outline-none focus:border-accent/60"
-                    placeholder="e.g. A-Tisket, A-Tasket"
+                    placeholder="e.g. SolarWinds, NotPetya"
                   />
                 </div>
               </div>
@@ -367,7 +367,7 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
                   onChange={(e) => updateField('bio', e.target.value)}
                   rows={3}
                   className="w-full px-3 py-2 bg-surface-hover border border-accent/20 rounded-md text-foreground placeholder-dim focus:outline-none focus:border-accent/60 resize-y"
-                  placeholder="Brief biography of the artist..."
+                  placeholder="Brief description of the threat actor..."
                 />
               </div>
 
@@ -471,9 +471,9 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
                 >
                   {loading
                     ? 'Saving...'
-                    : editingArtist
-                    ? 'Update Artist'
-                    : 'Create Artist'}
+                    : editingActor
+                    ? 'Update Threat Actor'
+                    : 'Create Threat Actor'}
                 </button>
                 <button
                   type="button"
@@ -490,7 +490,7 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
         {/* Regions */}
         <div className="space-y-4">
           {REGIONS.map((region) => {
-            const regionArtists = artistsByRegion(region);
+            const regionActors = actorsByRegion(region);
             const isCollapsed = collapsedRegions[region] ?? false;
 
             return (
@@ -526,7 +526,7 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
                       {REGION_LABELS[region]}
                     </h2>
                     <span className="text-sm text-dim">
-                      ({regionArtists.length}/16 artists)
+                      ({regionActors.length}/16 threat actors)
                     </span>
                   </div>
                   <button
@@ -536,16 +536,16 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
                     }}
                     className="px-3 py-1 text-sm bg-accent/10 text-accent border border-accent/30 rounded-md hover:bg-accent/20 transition-colors"
                   >
-                    + Add Artist
+                    + Add Threat Actor
                   </button>
                 </div>
 
-                {/* Artist list */}
+                {/* Threat actor list */}
                 {!isCollapsed && (
                   <div className="border-t border-accent/10">
-                    {regionArtists.length === 0 ? (
+                    {regionActors.length === 0 ? (
                       <div className="px-6 py-8 text-center text-dim">
-                        No artists in this region yet. Click &quot;Add Artist&quot; to get started.
+                        No threat actors in this region yet. Click &quot;Add Threat Actor&quot; to get started.
                       </div>
                     ) : (
                       <table className="w-full">
@@ -554,31 +554,31 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
                             <th className="px-6 py-3 w-16">Seed</th>
                             <th className="px-6 py-3 w-20">Photo</th>
                             <th className="px-6 py-3">Name</th>
-                            <th className="px-6 py-3 hidden md:table-cell">Instrument</th>
-                            <th className="px-6 py-3 hidden md:table-cell">Era</th>
+                            <th className="px-6 py-3 hidden md:table-cell">Affiliation</th>
+                            <th className="px-6 py-3 hidden md:table-cell">Country</th>
                             <th className="px-6 py-3 hidden md:table-cell w-16">Media</th>
                             <th className="px-6 py-3 w-32 text-right">Actions</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {regionArtists.map((artist) => (
+                          {regionActors.map((actor) => (
                             <tr
-                              key={artist.id}
+                              key={actor.id}
                               className="border-b border-accent/5 hover:bg-surface-hover transition-colors"
                             >
                               <td className="px-6 py-3">
                                 <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-accent/10 text-accent text-sm font-bold">
-                                  {artist.seed}
+                                  {actor.seed}
                                 </span>
                               </td>
                               <td className="px-6 py-3">
                                 <div className="flex items-center gap-2">
-                                  {artist.photo_url ? (
+                                  {actor.photo_url ? (
                                     <div className="relative group/photo">
                                       <label className="cursor-pointer" title="Click to replace photo">
                                         <img
-                                          src={artist.photo_url}
-                                          alt={artist.name}
+                                          src={actor.photo_url}
+                                          alt={actor.name}
                                           className="w-10 h-10 rounded-full object-cover border border-accent/20 hover:opacity-70 transition-opacity"
                                         />
                                         <input
@@ -587,14 +587,14 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
                                           className="hidden"
                                           onChange={(e) => {
                                             const file = e.target.files?.[0];
-                                            if (file) handlePhotoUpload(artist.id, file);
+                                            if (file) handlePhotoUpload(actor.id, file);
                                             e.target.value = '';
                                           }}
                                         />
                                       </label>
                                       <button
-                                        onClick={() => handlePhotoRemove(artist.id)}
-                                        disabled={uploadingPhotoFor === artist.id}
+                                        onClick={() => handlePhotoRemove(actor.id)}
+                                        disabled={uploadingPhotoFor === actor.id}
                                         className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full text-[10px] leading-none flex items-center justify-center opacity-0 group-hover/photo:opacity-100 transition-opacity"
                                         title="Remove photo"
                                       >
@@ -603,7 +603,7 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
                                     </div>
                                   ) : (
                                     <label className="w-10 h-10 rounded-full bg-surface-hover border border-dashed border-accent/30 flex items-center justify-center cursor-pointer hover:border-accent/60 transition-colors">
-                                      {uploadingPhotoFor === artist.id ? (
+                                      {uploadingPhotoFor === actor.id ? (
                                         <span className="text-[10px] text-dim">...</span>
                                       ) : (
                                         <svg className="w-4 h-4 text-dim" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -616,7 +616,7 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
                                         className="hidden"
                                         onChange={(e) => {
                                           const file = e.target.files?.[0];
-                                          if (file) handlePhotoUpload(artist.id, file);
+                                          if (file) handlePhotoUpload(actor.id, file);
                                           e.target.value = '';
                                         }}
                                       />
@@ -624,16 +624,16 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
                                   )}
                                 </div>
                               </td>
-                              <td className="px-6 py-3 font-medium">{artist.name}</td>
+                              <td className="px-6 py-3 font-medium">{actor.name}</td>
                               <td className="px-6 py-3 text-muted hidden md:table-cell">
-                                {artist.instrument || '--'}
+                                {actor.affiliation || '--'}
                               </td>
                               <td className="px-6 py-3 text-muted hidden md:table-cell">
-                                {artist.era || '--'}
+                                {actor.country_flag || '--'}
                               </td>
                               <td className="px-6 py-3 text-muted hidden md:table-cell">
-                                {artist.media && artist.media.length > 0 ? (
-                                  <span className="text-xs text-accent">{artist.media.length}</span>
+                                {actor.media && actor.media.length > 0 ? (
+                                  <span className="text-xs text-accent">{actor.media.length}</span>
                                 ) : (
                                   <span className="text-dim">--</span>
                                 )}
@@ -641,13 +641,13 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
                               <td className="px-6 py-3 text-right">
                                 <div className="flex items-center justify-end gap-2">
                                   <button
-                                    onClick={() => startEdit(artist)}
+                                    onClick={() => startEdit(actor)}
                                     className="px-3 py-1 text-xs text-accent border border-accent/30 rounded hover:bg-accent/10 transition-colors"
                                   >
                                     Edit
                                   </button>
                                   <button
-                                    onClick={() => handleDelete(artist)}
+                                    onClick={() => handleDelete(actor)}
                                     disabled={loading}
                                     className="px-3 py-1 text-xs text-red-400 border border-red-400/30 rounded hover:bg-red-400/10 disabled:opacity-50 transition-colors"
                                   >
@@ -669,7 +669,7 @@ export default function ArtistManager({ initialArtists }: ArtistManagerProps) {
 
         {/* Summary */}
         <div className="mt-8 text-center text-dim text-sm">
-          {artists.length} / 64 artists configured
+          {actors.length} / 64 threat actors configured
         </div>
       </div>
     </div>

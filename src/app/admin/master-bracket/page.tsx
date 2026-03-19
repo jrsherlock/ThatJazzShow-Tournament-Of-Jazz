@@ -1,5 +1,5 @@
 import { createServerClient } from '@/lib/supabase';
-import type { Artist, Tournament, MasterBracket } from '@/lib/types';
+import type { ThreatActor, Tournament, MasterBracket } from '@/lib/types';
 import { MasterBracketEditor } from '@/components/admin/MasterBracketEditor';
 
 export default async function MasterBracketPage() {
@@ -21,8 +21,8 @@ export default async function MasterBracketPage() {
     );
   }
 
-  const { data: artists } = await supabase
-    .from('artists')
+  const { data: actors } = await supabase
+    .from('threat_actors')
     .select('*')
     .order('region')
     .order('seed');
@@ -41,7 +41,7 @@ export default async function MasterBracketPage() {
       </p>
       <MasterBracketEditor
         tournament={tournament as Tournament}
-        artists={(artists ?? []) as Artist[]}
+        actors={(actors ?? []) as ThreatActor[]}
         existingBracket={masterBracket as MasterBracket | null}
       />
     </div>

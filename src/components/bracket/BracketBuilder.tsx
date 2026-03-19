@@ -13,31 +13,32 @@ import {
 } from '@dnd-kit/core';
 import { useRouter } from 'next/navigation';
 
-import type { Artist, Tournament, MatchupPreview, Pick } from '@/lib/types';
+import type { ThreatActor, Tournament, MatchupPreview, Pick } from '@/lib/types';
 import { TOTAL_PICKS, REGIONS } from '@/lib/constants';
 import {
   countPicks,
   isBracketComplete,
   cascadePicks,
   parseMatchupKey,
-  getMatchupArtists,
+  getMatchupActors,
   getChildMatchupKey,
 } from '@/lib/bracket-utils';
 
-import { ArtistCard } from '@/components/bracket/ArtistCard';
+import { ThreatActorCard } from '@/components/bracket/ThreatActorCard';
 import { RegionCard } from '@/components/bracket/RegionCard';
 import { RegionBracketModal } from '@/components/bracket/RegionBracketModal';
 import { FinalFour } from '@/components/bracket/FinalFour';
 import { MobileRoundFlow } from '@/components/bracket/MobileRoundFlow';
 import { MatchupPreviewModal } from '@/components/bracket/MatchupPreviewModal';
-import { ArtistBioModal } from '@/components/bracket/ArtistBioModal';
+import { ThreatActorBioModal } from '@/components/bracket/ThreatActorBioModal';
+import { MatrixRain } from '@/components/bracket/MatrixRain';
 
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
 interface BracketBuilderProps {
-  artists: Artist[];
+  actors: ThreatActor[];
   tournament: Tournament;
   previews: MatchupPreview[];
 }
@@ -47,7 +48,7 @@ interface BracketBuilderProps {
 // ---------------------------------------------------------------------------
 
 export default function BracketBuilder({
-  artists,
+  actors,
   tournament,
   previews,
 }: BracketBuilderProps) {
@@ -66,9 +67,9 @@ export default function BracketBuilder({
   } | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isDesktop, setIsDesktop] = useState(false);
-  const [activeDragArtist, setActiveDragArtist] = useState<Artist | null>(null);
-  const [activeArtistBio, setActiveArtistBio] = useState<{
-    artist: Artist;
+  const [activeDragActor, setActiveDragActor] = useState<ThreatActor | null>(null);
+  const [activeActorBio, setActiveActorBio] = useState<{
+    actor: ThreatActor;
     matchupKey: string;
   } | null>(null);
 
@@ -81,7 +82,7 @@ export default function BracketBuilder({
   }, []);
 
   // ---- centralized modal management ----------------------------------------
-  const anyModalOpen = activePreviewKey !== null || activeRegion !== null || showSubmitModal || activeArtistBio !== null;
+  const anyModalOpen = activePreviewKey !== null || activeRegion !== null || showSubmitModal || activeActorBio !== null;
 
   useEffect(() => {
     if (anyModalOpen) {
@@ -95,9 +96,9 @@ export default function BracketBuilder({
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return;
-      // Close in priority order: artist bio → preview → region → submit
-      if (activeArtistBio) {
-        setActiveArtistBio(null);
+      // Close in priority order: actor bio -> preview -> region -> submit
+      if (activeActorBio) {
+        setActiveActorBio(null);
       } else if (activePreviewKey) {
         setActivePreviewKey(null);
       } else if (activeRegion !== null) {
@@ -108,7 +109,7 @@ export default function BracketBuilder({
     };
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
-  }, [activeArtistBio, activePreviewKey, activeRegion, showSubmitModal]);
+  }, [activeActorBio, activePreviewKey, activeRegion, showSubmitModal]);
 
   // ---- derived values -----------------------------------------------------
   const pickCount = useMemo(() => countPicks(picks), [picks]);
@@ -124,13 +125,13 @@ export default function BracketBuilder({
     return previews.find((p) => p.matchup_key === activePreviewKey) ?? null;
   }, [activePreviewKey, previews]);
 
-  const activePreviewArtists = useMemo<
-    [Artist | null, Artist | null]
+  const activePreviewActors = useMemo<
+    [ThreatActor | null, ThreatActor | null]
   >(() => {
     if (!activePreviewKey) return [null, null];
     const { round, matchupIndex } = parseMatchupKey(activePreviewKey);
-    return getMatchupArtists(round, matchupIndex, picks, artists);
-  }, [activePreviewKey, picks, artists]);
+    return getMatchupActors(round, matchupIndex, picks, actors);
+  }, [activePreviewKey, picks, actors]);
 
   // ---- handlers -----------------------------------------------------------
 
@@ -187,12 +188,12 @@ export default function BracketBuilder({
     setActivePreviewKey(null);
   }, []);
 
-  const handleOpenArtistBio = useCallback((artist: Artist, matchupKey: string) => {
-    setActiveArtistBio({ artist, matchupKey });
+  const handleOpenActorBio = useCallback((actor: ThreatActor, matchupKey: string) => {
+    setActiveActorBio({ actor, matchupKey });
   }, []);
 
-  const handleCloseArtistBio = useCallback(() => {
-    setActiveArtistBio(null);
+  const handleCloseActorBio = useCallback(() => {
+    setActiveActorBio(null);
   }, []);
 
   const handleSubmit = useCallback(async () => {
@@ -246,40 +247,40 @@ export default function BracketBuilder({
   const sensors = useSensors(mouseSensor, touchSensor);
 
   const handleDragStart = useCallback((event: DragStartEvent) => {
-    const artist = event.active.data.current?.artist as Artist | undefined;
-    setActiveDragArtist(artist ?? null);
+    const actor = event.active.data.current?.actor as ThreatActor | undefined;
+    setActiveDragActor(actor ?? null);
   }, []);
 
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
-      setActiveDragArtist(null);
+      setActiveDragActor(null);
       const { active, over } = event;
       if (!over) return;
 
       const targetKey = over.data.current?.matchupKey as string | undefined;
-      const artistId = active.data.current?.artistId as string | undefined;
+      const actorId = active.data.current?.actorId as string | undefined;
       const sourceKey = active.data.current?.matchupKey as string | undefined;
-      if (!targetKey || !artistId || !sourceKey) return;
+      if (!targetKey || !actorId || !sourceKey) return;
 
-      // Case 1: Dropped on same matchup — pick winner directly
+      // Case 1: Dropped on same matchup -- pick winner directly
       if (targetKey === sourceKey) {
-        handlePickWinner(sourceKey, artistId);
+        handlePickWinner(sourceKey, actorId);
         return;
       }
 
-      // Case 2: Dropped on the next round's matchup — pick winner in source matchup
+      // Case 2: Dropped on the next round's matchup -- pick winner in source matchup
       const { round: sourceRound, matchupIndex: sourceIndex } = parseMatchupKey(sourceKey);
       const childKey = getChildMatchupKey(sourceRound, sourceIndex);
 
       if (targetKey === childKey) {
-        handlePickWinner(sourceKey, artistId);
+        handlePickWinner(sourceKey, actorId);
       }
     },
     [handlePickWinner]
   );
 
   const handleDragCancel = useCallback(() => {
-    setActiveDragArtist(null);
+    setActiveDragActor(null);
   }, []);
 
   // ---- render -------------------------------------------------------------
@@ -300,7 +301,7 @@ export default function BracketBuilder({
           <RegionCard
             key={idx}
             regionIndex={idx}
-            artists={artists}
+            actors={actors}
             picks={picks}
             onOpen={handleOpenRegion}
           />
@@ -309,43 +310,45 @@ export default function BracketBuilder({
 
       {/* Final Four & Championship */}
       <FinalFour
-        artists={artists}
+        actors={actors}
         picks={picks}
         onPickWinner={handlePickWinner}
         onOpenPreview={handleOpenPreview}
-        onOpenArtistBio={handleOpenArtistBio}
+        onOpenActorBio={handleOpenActorBio}
         className=""
       />
     </div>
   ) : (
     <MobileRoundFlow
-      artists={artists}
+      actors={actors}
       picks={picks}
       onPickWinner={handlePickWinner}
       onOpenPreview={handleOpenPreview}
-      onOpenArtistBio={handleOpenArtistBio}
+      onOpenActorBio={handleOpenActorBio}
       className=""
     />
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bracket-matrix dark min-h-screen" style={{ background: '#050a12' }}>
+      <MatrixRain />
+
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-accent/20">
+      <header className="bracket-header sticky top-0 z-40">
         <div className="max-w-[1600px] mx-auto px-4 py-3">
           <div className="flex items-center justify-between mb-2">
-            <h1 className="font-display text-lg sm:text-xl font-semibold text-accent">
+            <h1 className="font-display text-lg sm:text-xl font-semibold text-accent-light tracking-wider uppercase">
               {tournament.name}
             </h1>
-            <span className="text-sm text-muted">
-              {pickCount} / {TOTAL_PICKS} picks
+            <span className="text-sm text-accent-light/50 font-mono tabular-nums">
+              {pickCount} / {TOTAL_PICKS}
             </span>
           </div>
 
           {/* Progress bar */}
-          <div className="w-full h-1.5 bg-surface-hover rounded-full overflow-hidden">
+          <div className="progress-track w-full h-1.5 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-accent to-accent-light rounded-full transition-all duration-300 ease-out"
+              className="progress-fill h-full rounded-full transition-all duration-300 ease-out"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
@@ -353,14 +356,14 @@ export default function BracketBuilder({
       </header>
 
       {/* Main bracket area */}
-      <main className="max-w-[1600px] mx-auto px-4 py-6">
+      <main className="relative z-10 max-w-[1600px] mx-auto px-4 py-6">
         {isDesktop ? (
           <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd} onDragCancel={handleDragCancel}>
             {bracketContent}
             <DragOverlay dropAnimation={null}>
-              {activeDragArtist ? (
-                <ArtistCard
-                  artist={activeDragArtist}
+              {activeDragActor ? (
+                <ThreatActorCard
+                  actor={activeDragActor}
                   variant="bracket"
                   className="shadow-2xl shadow-accent/30 border-accent/40 !opacity-100"
                 />
@@ -378,19 +381,25 @@ export default function BracketBuilder({
           bracketComplete ? 'translate-y-0' : 'translate-y-full'
         }`}
       >
-        <div className="bg-surface-hover/95 backdrop-blur-sm border-t border-accent/30">
+        <div
+          className="backdrop-blur-md border-t"
+          style={{
+            background: 'rgba(5, 10, 18, 0.95)',
+            borderColor: 'rgba(52, 177, 228, 0.2)',
+          }}
+        >
           <div className="max-w-[1600px] mx-auto px-4 py-3 flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold text-accent font-display">
+              <p className="text-sm font-semibold text-accent-light font-display tracking-wider uppercase">
                 Bracket Complete!
               </p>
-              <p className="text-xs text-muted">
+              <p className="text-xs text-accent-light/40 font-mono">
                 All {TOTAL_PICKS} picks made. Ready to submit.
               </p>
             </div>
             <button
               onClick={() => setShowSubmitModal(true)}
-              className="px-6 py-2.5 bg-accent text-white hover:bg-accent-light font-semibold rounded-lg transition-colors duration-200 text-sm"
+              className="px-6 py-2.5 bg-accent-light/20 text-accent-light border border-accent-light/40 hover:bg-accent-light/30 hover:shadow-[0_0_16px_rgba(52,177,228,0.3)] font-semibold rounded-lg transition-all duration-200 text-sm tracking-wider uppercase font-mono"
             >
               Submit Bracket
             </button>
@@ -403,17 +412,17 @@ export default function BracketBuilder({
         <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd} onDragCancel={handleDragCancel}>
           <RegionBracketModal
             regionIndex={activeRegion}
-            artists={artists}
+            actors={actors}
             picks={picks}
             onPickWinner={handlePickWinner}
             onOpenPreview={handleOpenPreview}
-            onOpenArtistBio={handleOpenArtistBio}
+            onOpenActorBio={handleOpenActorBio}
             onClose={handleCloseRegion}
           />
           <DragOverlay dropAnimation={null}>
-            {activeDragArtist ? (
-              <ArtistCard
-                artist={activeDragArtist}
+            {activeDragActor ? (
+              <ThreatActorCard
+                actor={activeDragActor}
                 variant="bracket"
                 className="shadow-2xl shadow-accent/30 border-accent/40 !opacity-100"
               />
@@ -428,8 +437,8 @@ export default function BracketBuilder({
           isOpen={!!activePreviewKey}
           onClose={handleClosePreview}
           matchupKey={activePreviewKey}
-          artistA={activePreviewArtists[0]}
-          artistB={activePreviewArtists[1]}
+          actorA={activePreviewActors[0]}
+          actorB={activePreviewActors[1]}
           preview={activePreview}
           winnerId={picks[activePreviewKey]?.winnerId ?? null}
           commentary={picks[activePreviewKey]?.commentary ?? ''}
@@ -438,44 +447,57 @@ export default function BracketBuilder({
         />
       )}
 
-      {/* Artist Bio Modal */}
-      {activeArtistBio && (
-        <ArtistBioModal
-          artist={activeArtistBio.artist}
-          matchupKey={activeArtistBio.matchupKey}
-          winnerId={picks[activeArtistBio.matchupKey]?.winnerId ?? null}
+      {/* Threat Actor Bio Modal */}
+      {activeActorBio && (
+        <ThreatActorBioModal
+          actor={activeActorBio.actor}
+          matchupKey={activeActorBio.matchupKey}
+          winnerId={picks[activeActorBio.matchupKey]?.winnerId ?? null}
           onPickWinner={handlePickWinner}
-          onClose={handleCloseArtistBio}
+          onClose={handleCloseActorBio}
         />
       )}
 
       {/* Submit Modal */}
       {showSubmitModal && !submissionResult && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center modal-backdrop"
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{ background: 'rgba(5, 10, 18, 0.85)', backdropFilter: 'blur(8px)' }}
           onClick={(e) => {
             if (e.target === e.currentTarget && !isSubmitting)
               setShowSubmitModal(false);
           }}
         >
-          <div className="bg-surface-hover border border-accent/30 rounded-xl p-6 w-full max-w-md mx-4 shadow-2xl">
-            <h2 className="font-display text-xl font-semibold text-accent mb-1">
+          <div
+            className="matchup-card rounded-xl p-6 w-full max-w-md mx-4"
+            style={{
+              background: 'rgba(8, 16, 32, 0.95)',
+              border: '1px solid rgba(52, 177, 228, 0.2)',
+              boxShadow: '0 0 40px rgba(52, 177, 228, 0.08)',
+            }}
+          >
+            <h2 className="font-display text-xl font-semibold text-accent-light mb-1 tracking-wider uppercase">
               Submit Your Bracket
             </h2>
-            <p className="text-sm text-muted mb-6">
+            <p className="text-sm text-accent-light/40 mb-6 font-mono">
               Enter your name to lock in your picks.
             </p>
 
-            <label className="block text-sm text-foreground mb-1.5">
+            <label className="block text-xs text-accent-light/50 mb-1.5 font-mono uppercase tracking-wider">
               Display Name
             </label>
             <input
               type="text"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
-              placeholder="e.g. Miles D."
+              placeholder="e.g. Agent X"
               maxLength={50}
-              className="w-full px-4 py-2.5 bg-background border border-subtle rounded-lg text-foreground placeholder:text-zinc-600 focus:outline-none focus:border-accent/60 focus:ring-1 focus:ring-accent/30 transition-colors"
+              className="w-full px-4 py-2.5 rounded-lg text-foreground transition-colors focus:outline-none"
+              style={{
+                background: 'rgba(5, 10, 18, 0.8)',
+                border: '1px solid rgba(52, 177, 228, 0.2)',
+                color: '#F8F9F9',
+              }}
               disabled={isSubmitting}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && displayName.trim()) {
@@ -492,14 +514,18 @@ export default function BracketBuilder({
               <button
                 onClick={() => setShowSubmitModal(false)}
                 disabled={isSubmitting}
-                className="flex-1 px-4 py-2.5 bg-charcoal text-foreground hover:bg-zinc-700 rounded-lg transition-colors text-sm disabled:opacity-50"
+                className="flex-1 px-4 py-2.5 rounded-lg transition-colors text-sm disabled:opacity-50 text-accent-light/60 font-mono"
+                style={{
+                  background: 'rgba(52, 177, 228, 0.08)',
+                  border: '1px solid rgba(52, 177, 228, 0.15)',
+                }}
               >
                 Cancel
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={isSubmitting || !displayName.trim()}
-                className="flex-1 px-4 py-2.5 bg-accent text-white hover:bg-accent-light font-semibold rounded-lg transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-2.5 bg-accent-light/20 text-accent-light border border-accent-light/40 hover:bg-accent-light/30 hover:shadow-[0_0_16px_rgba(52,177,228,0.3)] font-semibold rounded-lg transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed font-mono tracking-wider uppercase"
               >
                 {isSubmitting ? (
                   <span className="flex items-center justify-center gap-2">
@@ -535,11 +561,24 @@ export default function BracketBuilder({
 
       {/* Success Modal */}
       {submissionResult && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
-          <div className="bg-surface-hover border border-accent/30 rounded-xl p-6 w-full max-w-md mx-4 shadow-2xl text-center">
-            <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-accent/10 flex items-center justify-center">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{ background: 'rgba(5, 10, 18, 0.85)', backdropFilter: 'blur(8px)' }}
+        >
+          <div
+            className="matchup-card rounded-xl p-6 w-full max-w-md mx-4 text-center"
+            style={{
+              background: 'rgba(8, 16, 32, 0.95)',
+              border: '1px solid rgba(52, 177, 228, 0.2)',
+              boxShadow: '0 0 40px rgba(52, 177, 228, 0.08)',
+            }}
+          >
+            <div
+              className="w-14 h-14 mx-auto mb-4 rounded-full flex items-center justify-center"
+              style={{ background: 'rgba(52, 177, 228, 0.1)', border: '1px solid rgba(52, 177, 228, 0.2)' }}
+            >
               <svg
-                className="w-7 h-7 text-accent"
+                className="w-7 h-7 text-accent-light"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -553,17 +592,23 @@ export default function BracketBuilder({
               </svg>
             </div>
 
-            <h2 className="font-display text-xl font-semibold text-accent mb-1">
+            <h2 className="font-display text-xl font-semibold text-accent-light mb-1 tracking-wider uppercase">
               Bracket Submitted!
             </h2>
-            <p className="text-sm text-muted mb-6">
+            <p className="text-sm text-accent-light/40 mb-6 font-mono">
               Your picks have been locked in. Share your bracket link with
               friends to compare.
             </p>
 
-            <div className="bg-background border border-subtle rounded-lg p-3 mb-6">
-              <p className="text-xs text-dim mb-1">Your bracket link</p>
-              <p className="text-sm text-zinc-200 break-all">
+            <div
+              className="rounded-lg p-3 mb-6"
+              style={{
+                background: 'rgba(5, 10, 18, 0.7)',
+                border: '1px solid rgba(52, 177, 228, 0.12)',
+              }}
+            >
+              <p className="text-xs text-accent-light/40 mb-1 font-mono uppercase tracking-wider">Your bracket link</p>
+              <p className="text-sm text-accent-light/70 break-all font-mono">
                 {typeof window !== 'undefined'
                   ? `${window.location.origin}/bracket/${submissionResult.accessToken}`
                   : `/bracket/${submissionResult.accessToken}`}
@@ -579,13 +624,17 @@ export default function BracketBuilder({
                       : `/bracket/${submissionResult.accessToken}`;
                   navigator.clipboard.writeText(url);
                 }}
-                className="flex-1 px-4 py-2.5 bg-charcoal text-foreground hover:bg-zinc-700 rounded-lg transition-colors text-sm"
+                className="flex-1 px-4 py-2.5 rounded-lg transition-all text-sm text-accent-light/60 font-mono"
+                style={{
+                  background: 'rgba(52, 177, 228, 0.08)',
+                  border: '1px solid rgba(52, 177, 228, 0.15)',
+                }}
               >
                 Copy Link
               </button>
               <button
                 onClick={handleViewBracket}
-                className="flex-1 px-4 py-2.5 bg-accent text-white hover:bg-accent-light font-semibold rounded-lg transition-colors text-sm"
+                className="flex-1 px-4 py-2.5 bg-accent-light/20 text-accent-light border border-accent-light/40 hover:bg-accent-light/30 hover:shadow-[0_0_16px_rgba(52,177,228,0.3)] font-semibold rounded-lg transition-all text-sm font-mono tracking-wider uppercase"
               >
                 View Bracket
               </button>
